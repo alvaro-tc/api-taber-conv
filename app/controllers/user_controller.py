@@ -21,6 +21,9 @@ user_bp = Blueprint("user", __name__)
 @user_bp.route("/register", methods=["POST"])
 def register_user():
     data = request.get_json()
+    name = data.get("name")
+    lastname = data.get("lastname")
+    cellphone = data.get("cellphone")
     email = data.get("email")
     password = data.get("password")
     roles = data.get("roles", ["user"])
@@ -33,7 +36,7 @@ def register_user():
         return jsonify({"error": "El usuario ya existe"}), 409
     
     
-    new_user = User(email=email, roles=roles, password=password)
+    new_user = User(name=name, lastname= lastname, cellphone= cellphone,email=email, roles=roles, password=password)
     new_user.save()
 
     return jsonify({"message": "Usuario creado exitosamente"}), 201

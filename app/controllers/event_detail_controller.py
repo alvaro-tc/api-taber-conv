@@ -84,7 +84,7 @@ def create_event_detail_from_scanner():
     # Buscar el evento con estado 0
     event_id = EventDetail.get_event_with_estado(0)
     if not event_id:
-        return jsonify({"error": "No se encontró un evento con estado 0"}), 404
+        return jsonify({"error": "No hay ningun evento activo"}), 400
     
     event_detail = EventDetail(
         hora=datetime.utcnow(),
