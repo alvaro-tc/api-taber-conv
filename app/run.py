@@ -2,17 +2,17 @@ from flask import Flask, jsonify
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS  # Importa CORS
 
-from controllers.product_controller import product_bp
-from controllers.user_controller import user_bp
-from controllers.church_controller import church_bp
-from controllers.event_controller import event_bp
-from controllers.guest_controller import guest_bp
-from controllers.position_controller import position_bp
-from controllers.event_detail_controller import event_detail_bp
-from extensions import db, jwt
+from app.controllers.product_controller import product_bp
+from app.controllers.user_controller import user_bp
+from app.controllers.church_controller import church_bp
+from app.controllers.event_controller import event_bp
+from app.controllers.guest_controller import guest_bp
+from app.controllers.position_controller import position_bp
+from app.controllers.event_detail_controller import event_detail_bp
+from app.extensions import db, jwt
 import json
-from models.user_model import User
-from models.token_block_list import TokenBlocklist
+from app.models.user_model import User
+from app.models.token_block_list import TokenBlocklist
 
 
 

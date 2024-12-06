@@ -1,4 +1,4 @@
-from extensions import db
+from app.extensions import db
 from sqlalchemy import Enum
 
 class Church(db.Model):

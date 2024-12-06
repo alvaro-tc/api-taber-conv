@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-from models.product_model import Product
-from views.product_view import render_product_list, render_product_detail
-from utils.decorators import jwt_required, roles_required
+from app.models.product_model import Product
+from app.views.product_view import render_product_list, render_product_detail
+from app.utils.decorators import jwt_required, roles_required
 
 product_bp = Blueprint("product", __name__)
 

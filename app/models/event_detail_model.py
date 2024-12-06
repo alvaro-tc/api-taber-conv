@@ -1,8 +1,8 @@
-from extensions import db
+from app.extensions import db
 from datetime import datetime
-from models.event_model import Event
-from models.guest_model import Guest
-from models.user_model import User
+from app.models.event_model import Event
+from app.models.guest_model import Guest
+from app.models.user_model import User
 import pytz
 
 class EventDetail(db.Model):

@@ -8,9 +8,9 @@ from flask_jwt_extended import (
     get_jwt_identity,
 )
 
-from models.user_model import User
-from models.token_block_list import TokenBlocklist
-from schemas.user_schema import UserSchema
+from app.models.user_model import User
+from app.models.token_block_list import TokenBlocklist
+from app.schemas.user_schema import UserSchema
 import json
 import logging
 logging.basicConfig(level=logging.INFO)

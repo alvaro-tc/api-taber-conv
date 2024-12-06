@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from models.event_detail_model import EventDetail
-from utils.decorators import jwt_required, roles_required
+from app.models.event_detail_model import EventDetail
+from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 
 

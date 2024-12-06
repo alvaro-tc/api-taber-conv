@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from models.position_model import Position
-from utils.decorators import jwt_required, roles_required
+from app.models.position_model import Position
+from app.utils.decorators import jwt_required, roles_required
 
 position_bp = Blueprint("position", __name__)
 

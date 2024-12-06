@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from models.guest_model import Guest
-from utils.decorators import jwt_required, roles_required
+from app.models.guest_model import Guest
+from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 
 

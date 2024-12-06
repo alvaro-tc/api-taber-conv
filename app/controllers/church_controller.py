@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from models.church_model import Church
-from utils.decorators import jwt_required, roles_required
+from app.models.church_model import Church
+from app.utils.decorators import jwt_required, roles_required
 
 church_bp = Blueprint("church", __name__)
 
