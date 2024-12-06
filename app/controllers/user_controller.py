@@ -37,8 +37,11 @@ def register_user():
     if existing_user:
         return jsonify({"error": "El usuario ya existe"}), 409
     
-    
-    new_user = User(name=name, lastname= lastname, cellphone= cellphone,email=email, roles=roles, password=password)
+    new_user = User(email=email,password=password, roles=roles)
+    new_user.name = name
+    new_user.lastname = lastname
+    new_user.cellphone = cellphone
+
     new_user.save()
 
     return jsonify({"message": "Usuario creado exitosamente"}), 201
@@ -226,7 +229,7 @@ def update_current_user():
     return jsonify(user_data), 200
 
 
-@user_bp.route("/user/<int:user_id>", methods=["DELETE"])
+@user_bp.route("/users/<int:user_id>", methods=["DELETE"])
 @roles_required(roles=["admin"])
 @jwt_required()
 def delete_user_by_id(user_id):

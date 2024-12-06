@@ -671,7 +671,7 @@
     },
     "/api/register": {
       "post": {
-        "tags": ["user"],
+        "tags": ["auth"],
         "summary": "Registra un nuevo usuario",
         "requestBody": {
           "content": {
@@ -714,12 +714,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Token"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "tokens": {
+                      "type": "object",
+                      "properties": {
+                        "access": {
+                          "type": "string"
+                        },
+                        "refresh": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           },
-          "401": {
+          "400": {
             "description": "Credenciales inválidas"
           }
         }
@@ -746,21 +762,7 @@
                       "type": "string"
                     },
                     "user_details": {
-                      "type": "object",
-                      "properties": {
-                        "username": {
-                          "type": "string"
-                        },
-                        "roles": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "email": {
-                          "type": "string"
-                        }
-                      }
+                      "$ref": "#/components/schemas/User"
                     }
                   }
                 }
@@ -768,7 +770,7 @@
             }
           },
           "401": {
-            "description": "No autenticado"
+            "description": "No autorizado"
           }
         }
       }
@@ -890,6 +892,134 @@
           },
           "401": {
             "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["user"],
+        "summary": "Elimina el usuario actual",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario eliminado exitosamente"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Obtiene un usuario por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["user"],
+        "summary": "Actualiza un usuario por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuario actualizado"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["user"],
+        "summary": "Elimina un usuario por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario eliminado exitosamente"
+          },
+          "401": {
+            "description": "No autorizado"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
           }
         }
       }
