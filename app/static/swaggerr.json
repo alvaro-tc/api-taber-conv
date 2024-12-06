@@ -1,0 +1,1044 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Church Management API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/churches": {
+      "get": {
+        "tags": ["church"],
+        "summary": "Obtiene una lista de todas las iglesias",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de iglesias",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Church"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["church"],
+        "summary": "Crea una nueva iglesia",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Church"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Iglesia creada"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/churches/{id}": {
+      "get": {
+        "tags": ["church"],
+        "summary": "Obtiene una iglesia por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la iglesia",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Church"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Iglesia no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["church"],
+        "summary": "Actualiza una iglesia por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Church"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Iglesia actualizada"
+          },
+          "404": {
+            "description": "Iglesia no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["church"],
+        "summary": "Elimina una iglesia por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Iglesia eliminada"
+          },
+          "404": {
+            "description": "Iglesia no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/positions": {
+      "get": {
+        "tags": ["position"],
+        "summary": "Obtiene una lista de todas las posiciones",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de posiciones",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Position"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["position"],
+        "summary": "Crea una nueva posición",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Position"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Posición creada"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/positions/{id}": {
+      "get": {
+        "tags": ["position"],
+        "summary": "Obtiene una posición por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la posición",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Position"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Posición no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["position"],
+        "summary": "Actualiza una posición por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Position"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Posición actualizada"
+          },
+          "404": {
+            "description": "Posición no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["position"],
+        "summary": "Elimina una posición por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Posición eliminada"
+          },
+          "404": {
+            "description": "Posición no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/events": {
+      "get": {
+        "tags": ["event"],
+        "summary": "Obtiene una lista de todos los eventos",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de eventos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["event"],
+        "summary": "Crea un nuevo evento",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Evento creado"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/events/{id}": {
+      "get": {
+        "tags": ["event"],
+        "summary": "Obtiene un evento por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del evento",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evento no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["event"],
+        "summary": "Actualiza un evento por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Evento actualizado"
+          },
+          "404": {
+            "description": "Evento no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["event"],
+        "summary": "Elimina un evento por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Evento eliminado"
+          },
+          "404": {
+            "description": "Evento no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/guests": {
+      "get": {
+        "tags": ["guest"],
+        "summary": "Obtiene una lista de todos los invitados",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de invitados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Guest"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["guest"],
+        "summary": "Crea un nuevo invitado",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Guest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Invitado creado"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/guests/{id}": {
+      "get": {
+        "tags": ["guest"],
+        "summary": "Obtiene un invitado por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del invitado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Guest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invitado no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["guest"],
+        "summary": "Actualiza un invitado por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Guest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invitado actualizado"
+          },
+          "404": {
+            "description": "Invitado no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["guest"],
+        "summary": "Elimina un invitado por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Invitado eliminado"
+          },
+          "404": {
+            "description": "Invitado no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/register": {
+      "post": {
+        "tags": ["user"],
+        "summary": "Registra un nuevo usuario",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario creado"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "409": {
+            "description": "El usuario ya existe"
+          }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Inicia sesión con un usuario existente",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inicio de sesión exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciales inválidas"
+          }
+        }
+      }
+    },
+    "/api/whoami": {
+      "get": {
+        "tags": ["auth"],
+        "summary": "Obtiene detalles del usuario autenticado",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del usuario autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "user_details": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string"
+                        },
+                        "roles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          }
+        }
+      }
+    },
+    "/api/refresh": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Refresca el token de acceso",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token de acceso refrescado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autenticado"
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "get": {
+        "tags": ["auth"],
+
+        "summary": "Cierra la sesión del usuario actual",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token removido exitosamente"
+          },
+          "401": {
+            "description": "No autenticado"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["user"],
+
+        "summary": "Obtiene una lista de todos los usuarios (solo admin)",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "tags": ["user"],
+
+        "summary": "Obtiene el usuario autenticado",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "JWTAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Church": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "departamento": {
+            "type": "string",
+            "enum": ["Chuquisaca", "La Paz", "Cochabamba", "Oruro", "Potosi", "Tarija", "Santa Cruz", "Beni", "Pando"]
+          },
+          "area": {
+            "type": "string",
+            "enum": ["URBANO", "RURAL"]
+          },
+          "localidad": {
+            "type": "string"
+          },
+          "direccion": {
+            "type": "string"
+          }
+        },
+        "required": ["nombre", "departamento", "area"]
+      },
+      "Position": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "descripcion": {
+            "type": "string"
+          }
+        },
+        "required": ["descripcion"]
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "estado": {
+            "type": "integer"
+          },
+            "fecha": {
+            "type": "string",
+            "format": "date"
+            }
+        },
+        "required": ["descripcion", "estado", "fecha"]
+      },
+      "Guest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "apellidos": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "fecha_registro": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "position_id": {
+            "type": "integer"
+          },
+          "church_id": {
+            "type": "integer"
+          }
+        },
+        "required": ["nombre", "apellidos", "position_id", "church_id"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+            
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["admin", "user"]
+            }
+          }
+        },
+        "required": ["email", "password", "roles"]
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "access": {
+            "type": "string"
+          },
+          "refresh": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
