@@ -13,6 +13,8 @@ from app.models.token_block_list import TokenBlocklist
 from app.schemas.user_schema import UserSchema
 import json
 import logging
+
+from app.utils.decorators import roles_required
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 user_bp = Blueprint("user", __name__)
@@ -129,9 +131,7 @@ def get_all_users():
         
         return (
             jsonify(
-                {
-                    "users": result,
-                }
+                result
             ),
             200,
         )
@@ -145,11 +145,11 @@ def get_current_user():
     user = current_user
     user_data = UserSchema().dump(user)
     print(user_data)
-    return jsonify({"user": user_data}), 200
+    return jsonify(user_data), 200
 
 
 
-@user_bp.route("/user/<int:user_id>", methods=["GET"])
+@user_bp.route("/users/<int:user_id>", methods=["GET"])
 @jwt_required()
 def get_user_by_id(user_id):
     user = User.query.get(user_id)
@@ -157,11 +157,12 @@ def get_user_by_id(user_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     user_data = UserSchema().dump(user)
-    return jsonify({"user": user_data}), 200
+    return jsonify(user_data), 200
 
 
-@user_bp.route("/user/<int:user_id>", methods=["PUT"])
+@user_bp.route("/users/<int:user_id>", methods=["PUT"])
 @jwt_required()
+@roles_required(roles=["admin"])
 def update_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -191,9 +192,10 @@ def update_user(user_id):
     user.save()
 
     user_data = UserSchema().dump(user)
-    return jsonify({"user": user_data}), 200
+    return jsonify(user_data), 200
 
-@user_bp.route("/user", methods=["PUT"])
+@user_bp.route("/users", methods=["PUT"])
+@roles_required(roles=["admin"])
 @jwt_required()
 def update_current_user():
     user = current_user
@@ -221,10 +223,11 @@ def update_current_user():
     user.save()
 
     user_data = UserSchema().dump(user)
-    return jsonify({"user": user_data}), 200
+    return jsonify(user_data), 200
 
 
 @user_bp.route("/user/<int:user_id>", methods=["DELETE"])
+@roles_required(roles=["admin"])
 @jwt_required()
 def delete_user_by_id(user_id):
     user = User.query.get(user_id)
@@ -236,6 +239,7 @@ def delete_user_by_id(user_id):
 
 
 @user_bp.route("/user", methods=["DELETE"])
+@roles_required(roles=["admin"])
 @jwt_required()
 def delete_current_user():
     user = current_user
