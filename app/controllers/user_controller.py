@@ -122,24 +122,12 @@ def logout_user():
 
 @user_bp.route("/users", methods=["GET"])
 @jwt_required()
+@roles_required(roles=["admin"])
 def get_all_users():
-    claims = get_jwt()
-
-    if claims.get("admin") == True:
-        page = request.args.get("page", default=1, type=int)
-        per_page = request.args.get("per_page", default=3, type=int)
-        
-        users = User.query.paginate(page=page, per_page=per_page)
-        result = UserSchema().dump(users, many=True)
-        
-        return (
-            jsonify(
-                result
-            ),
-            200,
-        )
-
-    return jsonify({"message": "No tienes autorizacion para acceder a esto"}), 401
+    users = User.query.all()
+    result = UserSchema(many=True).dump(users)
+    
+    return jsonify(result), 200
 
 
 @user_bp.route("/user", methods=["GET"])
@@ -181,7 +169,7 @@ def update_user(user_id):
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
-    roles = data.get("roles")
+    roles = data.get(json.dumps(roles), ["user"])
     name = data.get("name")
     lastname = data.get("lastname")
     cellphone = data.get("cellphone")
