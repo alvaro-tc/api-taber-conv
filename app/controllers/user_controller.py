@@ -126,7 +126,10 @@ def get_all_users():
     claims = get_jwt()
 
     if claims.get("admin") == True:
-        users = User.query.all()
+        page = request.args.get("page", default=1, type=int)
+        per_page = request.args.get("per_page", default=3, type=int)
+        
+        users = User.query.paginate(page=page, per_page=per_page)
         result = UserSchema().dump(users, many=True)
         
         return (
@@ -156,14 +159,14 @@ def get_user_by_id(user_id):
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
     return jsonify(
-    {
-        "email": user.email,
-        "roles": json.loads(user.roles),
-        "cellphone": user.cellphone,
-        "lastname": user.lastname,
-        "name": user.name,
-        "id": user.id,
-    }
+        {
+            "email": user.email,
+            "roles": json.loads(user.roles),
+            "cellphone": user.cellphone,
+            "lastname": user.lastname,
+            "name": user.name,
+            "id": user.id,
+        }
     ),200
 
 
