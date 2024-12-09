@@ -155,9 +155,16 @@ def get_user_by_id(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
-
-    user_data = UserSchema().dump(user)
-    return jsonify(user_data), 200
+    return jsonify(
+    {
+        "email": user.email,
+        "roles": json.loads(user.roles),
+        "cellphone": user.cellphone,
+        "lastname": user.lastname,
+        "name": user.name,
+        "id": user.id,
+    }
+    ),200
 
 
 @user_bp.route("/users/<int:user_id>", methods=["PUT"])
