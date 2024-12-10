@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.models.event_detail_model import EventDetail
 from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
-
+from flask_jwt_extended import current_user
 
 event_detail_bp = Blueprint("event_detail", __name__)
 
@@ -86,7 +86,8 @@ def create_event_detail_from_scanner():
         return jsonify({"error": "No hay ningun evento activo"}), 400
     
     # Obtener el user_id del usuario actual
-    user_id = request.user.id
+    user = current_user
+    user_id = user.id
     
     event_detail = EventDetail(
         hora=datetime.utcnow(),
