@@ -76,7 +76,6 @@ def create_event_detail_from_scanner():
     
     guest_id = data.get("guest_id")
     observaciones = data.get("observaciones")
-    user_id = data.get("user_id")
     
     if not guest_id:
         return jsonify({"error": "Faltan datos requeridos"}), 400
@@ -86,12 +85,15 @@ def create_event_detail_from_scanner():
     if not event_id:
         return jsonify({"error": "No hay ningun evento activo"}), 400
     
+    # Obtener el user_id del usuario actual
+    user_id = request.user.id
+    
     event_detail = EventDetail(
         hora=datetime.utcnow(),
         event_id=event_id,
         guest_id=guest_id,
         observaciones=observaciones,
-        user_id=user_id  # Asumiendo que el usuario actual está autenticado
+        user_id=user_id
     )
     event_detail.save()
     return jsonify(event_detail.serialize()), 201

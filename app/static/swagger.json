@@ -1044,9 +1044,6 @@
                   },
                   "observaciones": {
                     "type": "string"
-                  },
-                  "user_id": {
-                    "type": "integer"
                   }
                 },
                 "required": ["guest_id"]
