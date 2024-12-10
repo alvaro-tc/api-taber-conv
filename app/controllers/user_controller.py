@@ -167,9 +167,12 @@ def update_user(user_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     data = request.get_json()
+    if not data:
+        return jsonify({"error": "Datos no proporcionados"}), 400
+
     email = data.get("email")
     password = data.get("password")
-    roles = data.get(json.dumps(roles), ["user"])
+    roles = data.get("roles")
     name = data.get("name")
     lastname = data.get("lastname")
     cellphone = data.get("cellphone")
@@ -179,18 +182,18 @@ def update_user(user_id):
     if password:
         user.set_password(password)
     if roles:
-        user.roles = roles
+        user.roles = json.dumps(roles)
     if name:
         user.name = name
     if lastname:
         user.lastname = lastname
     if cellphone:
         user.cellphone = cellphone
-
     user.save()
-
     user_data = UserSchema().dump(user)
     return jsonify(user_data), 200
+
+
 
 @user_bp.route("/users", methods=["PUT"])
 @roles_required(roles=["admin"])
