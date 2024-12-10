@@ -45,7 +45,12 @@ class EventDetail(db.Model):
         # Verificar si ya existe un EventDetail con el mismo event_id y guest_id
         existing_event_detail = EventDetail.query.filter_by(event_id=self.event_id, guest_id=self.guest_id).first()
         if existing_event_detail:
-            raise ValueError("Ya existe un EventDetail con el mismo event_id y guest_id")
+            event = Event.query.get(existing_event_detail.event_id)
+            guest = Guest.query.get(existing_event_detail.guest_id)
+            nombre_completo = f"{guest.nombre} {guest.apellidos}" if guest else "anonimo"
+            descripcion = event.descripcion
+            
+            raise ValueError(nombre_completo+ " ya está registrado en el evento: " + descripcion)
         
         # Ajustar la hora a la zona horaria de Bolivia (UTC-4)
         bolivia_tz = pytz.timezone('America/La_Paz')
@@ -63,7 +68,12 @@ class EventDetail(db.Model):
         # Verificar si ya existe un EventDetail con el mismo event_id y guest_id
         existing_event_detail = EventDetail.query.filter_by(event_id=event_id, guest_id=guest_id).first()
         if existing_event_detail and existing_event_detail.id != self.id:
-            raise ValueError("Ya existe un EventDetail con el mismo event_id y guest_id")
+            event = Event.query.get(existing_event_detail.event_id)
+            guest = Guest.query.get(existing_event_detail.guest_id)
+            nombre_completo = f"{guest.nombre} {guest.apellidos}" if guest else "anonimo"
+            descripcion = event.descripcion
+            
+            raise ValueError(nombre_completo + " ya está registrado en el evento: " + descripcion)
         
         # Ajustar la hora a la zona horaria de Bolivia (UTC-4)
         bolivia_tz = pytz.timezone('America/La_Paz')
