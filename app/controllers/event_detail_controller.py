@@ -18,10 +18,11 @@ def get_event_details():
 @jwt_required
 @roles_required(roles=["admin", "user"])
 def get_event_detail(id):
-    event_detail = EventDetail.get_by_id(id)
-    if event_detail:
-        return jsonify(event_detail.serialize())
-    return jsonify({"error": "Detalle de evento no encontrado"}), 404
+    event_details = EventDetail.query.filter_by(event_id=id).all()
+    if event_details:
+        return jsonify([event_detail.serialize() for event_detail in event_details])
+    return jsonify({"error": "Detalles de evento no encontrados"}), 400
+
 
 @event_detail_bp.route("/event_details", methods=["POST"])
 @jwt_required
