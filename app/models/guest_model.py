@@ -18,10 +18,12 @@ class Guest(db.Model):
     # Relación con la tabla "churchs"
     church_id = db.Column(db.Integer, db.ForeignKey('churchs.id', ondelete='CASCADE'), nullable=False)
     church = db.relationship('Church', back_populates='guests')
+    
+    # Relación con la tabla "directives"
+    directive_id = db.Column(db.Integer, db.ForeignKey('directives.id', ondelete='CASCADE'), nullable=False)
+    directive = db.relationship('Directive', back_populates='guests')
 
-    
     event_details = db.relationship('EventDetail', back_populates='guest')
-    
     
     @staticmethod
     def get_all():
@@ -35,13 +37,14 @@ class Guest(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, nombre, apellidos, email, telefono, position_id, church_id):
+    def update(self, nombre, apellidos, email, telefono, position_id, church_id, directive_id):
         self.nombre = nombre
         self.apellidos = apellidos
         self.email = email
         self.telefono = telefono
         self.position_id = position_id
         self.church_id = church_id
+        self.directive_id = directive_id
         db.session.commit()
 
     def delete(self):
@@ -57,5 +60,6 @@ class Guest(db.Model):
             'telefono': self.telefono,
             'fecha_registro': self.fecha_registro.isoformat(),
             'position_id': self.position_id,
-            'church_id': self.church_id
+            'church_id': self.church_id,
+            'directive_id': self.directive_id
         }

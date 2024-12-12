@@ -3,12 +3,7 @@ from app.models.guest_model import Guest
 from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 
-
 guest_bp = Blueprint("guest", __name__)
-
-
-
-
 
 @guest_bp.route("/guests", methods=["GET"])
 @jwt_required
@@ -19,6 +14,8 @@ def get_guests():
     for guest in guests:
         guest_data = guest.serialize()
         guest_data["church_name"] = guest.church.nombre if guest.church else None
+        guest_data["position_description"] = guest.position.descripcion if guest.position else None
+        guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
         guests_data.append(guest_data)
     return jsonify(guests_data)
 
@@ -31,6 +28,7 @@ def get_guest(id):
         guest_data = guest.serialize()
         guest_data["church_name"] = guest.church.nombre if guest.church else None
         guest_data["position_description"] = guest.position.descripcion if guest.position else None
+        guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
         return jsonify(guest_data)
     return jsonify({"error": "Invitado no encontrado"}), 404
 
@@ -45,9 +43,10 @@ def create_guest():
     telefono = data.get("telefono")
     position_id = data.get("position_id")
     church_id = data.get("church_id")
-    if not nombre or not apellidos or not position_id or not church_id:
+    directive_id = data.get("directive_id")
+    if not nombre or not apellidos or not position_id:
         return jsonify({"error": "Faltan datos requeridos"}), 400
-    guest = Guest(nombre=nombre, apellidos=apellidos, email=email, telefono=telefono, position_id=position_id, church_id=church_id)
+    guest = Guest(nombre=nombre, apellidos=apellidos, email=email, telefono=telefono, position_id=position_id, church_id=church_id, directive_id=directive_id)
     guest.save()
     return jsonify(guest.serialize()), 201
 
@@ -65,7 +64,8 @@ def update_guest(id):
     telefono = data.get("telefono")
     position_id = data.get("position_id")
     church_id = data.get("church_id")
-    guest.update(nombre=nombre, apellidos=apellidos, email=email, telefono=telefono, position_id=position_id, church_id=church_id)
+    directive_id = data.get("directive_id")
+    guest.update(nombre=nombre, apellidos=apellidos, email=email, telefono=telefono, position_id=position_id, church_id=church_id, directive_id=directive_id)
     return jsonify(guest.serialize())
 
 @guest_bp.route("/guests/<int:id>", methods=["DELETE"])

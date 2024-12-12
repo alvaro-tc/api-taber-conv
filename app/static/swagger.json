@@ -1232,6 +1232,172 @@
           }
         }
       }
+    },
+    "/api/directives": {
+      "get": {
+        "tags": ["directive"],
+        "summary": "Obtiene una lista de todas las directivas",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de directivas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Directive"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["directive"],
+        "summary": "Crea una nueva directiva",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Directive"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Directiva creada"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/directives/{id}": {
+      "get": {
+        "tags": ["directive"],
+        "summary": "Obtiene una directiva por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de la directiva",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Directive"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Directiva no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["directive"],
+        "summary": "Actualiza una directiva por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Directive"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Directiva actualizada"
+          },
+          "404": {
+            "description": "Directiva no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["directive"],
+        "summary": "Elimina una directiva por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Directiva eliminada"
+          },
+          "404": {
+            "description": "Directiva no encontrada"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1402,6 +1568,19 @@
             "type": "string"
           }
         }
+      },
+      "Directive": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "nombre": {
+            "type": "string"
+          }
+        },
+        "required": ["nombre"]
       }
     }
   }
