@@ -16,11 +16,11 @@ class Guest(db.Model):
     position = db.relationship('Position', back_populates='guests')
     
     # Relación con la tabla "churchs"
-    church_id = db.Column(db.Integer, db.ForeignKey('churchs.id', ondelete='CASCADE'), nullable=False)
+    church_id = db.Column(db.Integer, db.ForeignKey('churchs.id', ondelete='CASCADE'), nullable=True)
     church = db.relationship('Church', back_populates='guests')
     
     # Relación con la tabla "directives"
-    directive_id = db.Column(db.Integer, db.ForeignKey('directives.id', ondelete='CASCADE'), nullable=False)
+    directive_id = db.Column(db.Integer, db.ForeignKey('directives.id', ondelete='CASCADE'), nullable=True)
     directive = db.relationship('Directive', back_populates='guests')
 
     event_details = db.relationship('EventDetail', back_populates='guest')

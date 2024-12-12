@@ -9,6 +9,8 @@ from app.controllers.event_controller import event_bp
 from app.controllers.guest_controller import guest_bp
 from app.controllers.position_controller import position_bp
 from app.controllers.event_detail_controller import event_detail_bp
+from app.controllers.directive_controller import directive_bp
+
 from app.extensions import db, jwt
 import json
 from app.models.user_model import User
@@ -49,7 +51,7 @@ app.register_blueprint(event_bp, url_prefix="/api")
 app.register_blueprint(guest_bp, url_prefix="/api")
 app.register_blueprint(position_bp, url_prefix="/api")
 app.register_blueprint(event_detail_bp, url_prefix="/api")
-
+app.register_blueprint(directive_bp, url_prefix="/api")
 
 # load user
 @jwt.user_lookup_loader
