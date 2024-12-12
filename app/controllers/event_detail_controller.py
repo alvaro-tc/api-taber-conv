@@ -20,8 +20,14 @@ def get_event_details():
 def get_event_detail(id):
     event_details = EventDetail.query.filter_by(event_id=id).all()
     if event_details:
-        return jsonify([event_detail.serialize() for event_detail in event_details])
-    return jsonify({"error": "Detalles de evento no encontrados"}), 400
+        event_details_data = []
+        for event_detail in event_details:
+            event_detail_data = event_detail.serialize()
+            event_detail_data["guest_nombre"] = event_detail.guest.nombre if event_detail.guest else None
+            event_detail_data["guest_apellidos"] = event_detail.guest.apellidos if event_detail.guest else None
+            event_details_data.append(event_detail_data)
+        return jsonify(event_details_data)
+    return jsonify({"error": "Detalles de evento no encontrados"}), 404
 
 
 @event_detail_bp.route("/event_details", methods=["POST"])
