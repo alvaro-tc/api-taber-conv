@@ -35,6 +35,9 @@ swagger_ui_blueprint = get_swaggerui_blueprint(
 app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///products.db"
+app.config["SQLALCHEMY_BINDS"] = {
+    'mysql_db': 'mysql+pymysql://tabernaculo:iiPU9eo9PsY8Nsrj+@convención.tumype.com/bd_convencion'
+}
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
