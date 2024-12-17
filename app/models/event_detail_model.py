@@ -40,9 +40,9 @@ class EventDetail(db.Model):
    
     def save(self):
         if not Guest.query.get(self.guest_id):
-            raise ValueError("El guest_id proporcionado no existe")
+            raise ValueError("El usuario proporcionado no existe")
         if not User.query.get(self.user_id):
-            raise ValueError("El user_id proporcionado no existe")
+            raise ValueError("El usuario (registrador) proporcionado no existe")
         
         # Verificar si ya existe un EventDetail con el mismo event_id y guest_id
         existing_event_detail = EventDetail.query.filter_by(event_id=self.event_id, guest_id=self.guest_id).first()

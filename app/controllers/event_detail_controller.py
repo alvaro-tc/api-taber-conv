@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.models.event_detail_model import EventDetail
+from app.models.guest_model import Guest
 from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 from flask_jwt_extended import current_user
@@ -75,7 +76,6 @@ def delete_event_detail(id):
 
 
 
-
 @event_detail_bp.route("/scanner", methods=["POST"])
 @jwt_required
 @roles_required(roles=["admin", "user"])
@@ -86,7 +86,7 @@ def create_event_detail_from_scanner():
     observaciones = data.get("observaciones")
     
     if not guest_id:
-        return jsonify({"error": "Faltan datos requeridos"}), 400
+        return jsonify({"error": "QR invalido"}), 400
     
     # Buscar el evento con estado 0
     event_id = EventDetail.get_event_with_estado(0)
@@ -97,6 +97,11 @@ def create_event_detail_from_scanner():
     user = current_user
     user_id = user.id
     
+    # Obtener el guest
+    guest = Guest.query.get(guest_id)
+    if not guest:
+        return jsonify({"error": "Invitado no encontrado"}), 404
+    
     event_detail = EventDetail(
         hora=datetime.utcnow(),
         event_id=event_id,
@@ -105,4 +110,9 @@ def create_event_detail_from_scanner():
         user_id=user_id
     )
     event_detail.save()
-    return jsonify(event_detail.serialize()), 201
+    
+    response = event_detail.serialize()
+    response["guest_nombre"] = guest.nombre+" "+guest.apellidos
+
+    
+    return jsonify(response), 201
