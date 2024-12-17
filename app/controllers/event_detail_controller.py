@@ -3,6 +3,8 @@ from app.models.event_detail_model import EventDetail
 from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 from flask_jwt_extended import current_user
+from flask_socketio import emit
+from app.extensions import socketio
 
 event_detail_bp = Blueprint("event_detail", __name__)
 
@@ -27,7 +29,7 @@ def get_event_detail(id):
             event_detail_data["guest_apellidos"] = event_detail.guest.apellidos if event_detail.guest else None
             event_details_data.append(event_detail_data)
         return jsonify(event_details_data)
-    return jsonify({"error": "Detalles de evento no encontrados"}), 404
+    return jsonify([])
 
 
 @event_detail_bp.route("/event_details", methods=["POST"])
@@ -44,6 +46,8 @@ def create_event_detail():
         return jsonify({"error": "Faltan datos requeridos"}), 400
     event_detail = EventDetail(hora=hora, event_id=event_id, guest_id=guest_id, observaciones=observaciones, user_id=user_id)
     event_detail.save()
+    
+    socketio.emit('new_event_detail', event_detail.serialize(), broadcast=True)
     return jsonify(event_detail.serialize()), 201
 
 @event_detail_bp.route("/event_details/<int:id>", methods=["PUT"])

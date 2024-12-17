@@ -19,22 +19,28 @@ class Event(db.Model):
         return Event.query.get(event_id)
 
     def save(self):
-        if self.estado == 0 and self.descripcion in ["Asistencia Mañana", "Asistencia Tarde"]:
-            existing_event = Event.query.filter_by(estado=0, descripcion=self.descripcion).first()
-            if existing_event:
-                raise ValueError(f"Ya existe un evento con estado 0")
+        if self._is_duplicate_event(self.estado, self.descripcion):
+            raise ValueError("Ya existe un evento con estado 0 y la misma descripción")
         db.session.add(self)
         db.session.commit()
 
     def update(self, descripcion, estado, fecha):
-        if estado == 0 and self.estado != 0 and descripcion in ["Asistencia Mañana", "Asistencia Tarde"]:
-            existing_event = Event.query.filter_by(estado=0, descripcion=descripcion).first()
-            if existing_event:
-                raise ValueError("Ya existe un evento con estado 0 y la misma descripción")
+        if self._is_duplicate_event(estado, descripcion):
+            raise ValueError("Ya existe un evento con estado 0 y la misma descripción")
         self.descripcion = descripcion
         self.estado = estado
         self.fecha = fecha
         db.session.commit()
+
+    def _is_duplicate_event(self, estado, descripcion):
+        estado_no_rep = ["Asistencia Mañana", "Asistencia Tarde"]
+        if estado == 0 and descripcion in estado_no_rep:
+            existing_event = Event.query.filter_by(estado=0).filter(Event.descripcion.in_(estado_no_rep)).first()
+            if existing_event:
+                return True
+        return False
+
+
 
     def delete(self):
         db.session.delete(self)

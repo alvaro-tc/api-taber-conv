@@ -92,6 +92,8 @@ class EventDetail(db.Model):
         db.session.delete(self)
         db.session.commit()
         
+        
+
     def serialize(self):
         return {
             'id': self.id,

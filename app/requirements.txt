@@ -3,6 +3,7 @@ flask-sqlalchemy
 Flask-Login
 Flask-JWT-Extended
 flask-swagger-ui
+flask-socketio
 marshmallow
 pytest
 pytest-flask
