@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS  # Importa CORS
-from flask_socketio import SocketIO
 
 
 from app.controllers.product_controller import product_bp
@@ -18,7 +17,6 @@ import json
 from app.models.user_model import User
 from app.models.token_block_list import TokenBlocklist
 
-from app.extensions import socketio
 
 
 app = Flask(__name__)
@@ -41,7 +39,7 @@ app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///products.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-socketio.init_app(app)
+
 
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 # initialize exts
@@ -127,5 +125,5 @@ with app.app_context():
 
 
 if __name__ == "__main__":
-    socketio.run(app,host='0.0.0.0', port=5000,debug=True)
+    app.run(app,host='0.0.0.0', port=5000,debug=True)
 
