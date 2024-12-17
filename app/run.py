@@ -36,7 +36,7 @@ swagger_ui_blueprint = get_swaggerui_blueprint(
 )
 app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///products.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://tabernaculo:iiPU9eo9PsY8Nsrj+@209.222.17.103:3306/bd_convencion"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
@@ -125,5 +125,5 @@ with app.app_context():
 
 
 if __name__ == "__main__":
-    app.run(app,host='0.0.0.0', port=5000,debug=True)
+    app.run(host='0.0.0.0', port=5000,debug=True)
 

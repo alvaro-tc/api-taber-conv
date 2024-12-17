@@ -3,7 +3,7 @@ from datetime import datetime
 
 class TokenBlocklist(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    jti = db.Column(db.String(), nullable=True)
+    jti = db.Column(db.String(50), nullable=True)
     create_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
     def __repr__(self):

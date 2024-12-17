@@ -10,13 +10,13 @@ class User(UserMixin, db.Model):
     
 
     id = db.Column(db.Integer(), primary_key=True)
-    email = db.Column(db.String(), unique = True, nullable=False)
+    email = db.Column(db.String(50), unique = True, nullable=False)
     password = db.Column(db.Text())
     roles = db.Column(db.String(50), nullable=False)
     
-    name = db.Column(db.String(), nullable=True)
-    lastname = db.Column(db.String(), nullable=True)
-    cellphone = db.Column(db.String(), nullable=True)
+    name = db.Column(db.String(50), nullable=True)
+    lastname = db.Column(db.String(50), nullable=True)
+    cellphone = db.Column(db.String(50), nullable=True)
     
     
     event_details = db.relationship('EventDetail', back_populates='user')

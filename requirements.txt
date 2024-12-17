@@ -10,3 +10,4 @@ pytest-flask
 flask_cors
 pytz
 gunicorn
+pymysql

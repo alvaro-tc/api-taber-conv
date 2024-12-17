@@ -9,3 +9,4 @@ pytest
 pytest-flask
 flask_cors
 pytz
+pymysql
