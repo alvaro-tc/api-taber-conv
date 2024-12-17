@@ -6,13 +6,13 @@ class Guest(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(255), nullable=False)
-    apellidos = db.Column(db.String(255), nullable=False)
+    apellidos = db.Column(db.String(255), nullable=True)
     email = db.Column(db.String(255), nullable=True)
     telefono = db.Column(db.String(20), nullable=True)
-    fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+    fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=True)
     
     # Relación con la tabla "positions"
-    position_id = db.Column(db.Integer, db.ForeignKey('positions.id', ondelete='CASCADE'), nullable=False)
+    position_id = db.Column(db.Integer, db.ForeignKey('positions.id', ondelete='CASCADE'), nullable=True)
     position = db.relationship('Position', back_populates='guests')
     
     # Relación con la tabla "churchs"
