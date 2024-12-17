@@ -10,8 +10,8 @@ class Church(db.Model):
     # Enum para departamento
     departamento = db.Column(
         Enum(
-            'El Alto','Chuquisaca', 'La Paz', 'Cochabamba', 'Oruro', 
-            'Potosi', 'Tarija', 'Santa Cruz', 'Beni', 'Pando', 
+            'El Alto', 'Chuquisaca', 'La Paz', 'Cochabamba', 'Oruro', 
+            'Potosi', 'Tarija', 'Santa Cruz', 'Beni', 'Pando', 'Sucre',
             name='departamento_enum'
         ),
         nullable=False
