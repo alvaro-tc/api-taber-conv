@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models.event_detail_model import EventDetail
 from app.models.guest_model import Guest
+from app.models.event_model import Event
 from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 from flask_jwt_extended import current_user
@@ -102,6 +103,11 @@ def create_event_detail_from_scanner():
     if not guest:
         return jsonify({"error": "Invitado no encontrado"}), 404
     
+    # Obtener el evento
+    event = Event.query.get(event_id)
+    if not event:
+        return jsonify({"error": "Evento no encontrado"}), 404
+    
     event_detail = EventDetail(
         hora=datetime.utcnow(),
         event_id=event_id,
@@ -112,7 +118,7 @@ def create_event_detail_from_scanner():
     event_detail.save()
     
     response = event_detail.serialize()
-    response["guest_nombre"] = guest.nombre+" "+guest.apellidos
-
+    response["guest_nombre"] = guest.nombre + " " + guest.apellidos
+    response["event_descripcion"] = event.descripcion
     
     return jsonify(response), 201
