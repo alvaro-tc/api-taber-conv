@@ -9,6 +9,39 @@ from flask_jwt_extended import current_user
 
 event_detail_bp = Blueprint("event_detail", __name__)
 
+
+
+
+
+@event_detail_bp.route("/event_details/all", methods=["GET"])
+@jwt_required
+@roles_required(roles=["admin", "user"])
+def get_event_detail():
+    event_id = EventDetail.get_event_with_estado(0)
+    
+    if not event_id:
+        latest_event_detail = EventDetail.query.order_by(EventDetail.created_at.desc()).first()
+        event_id = latest_event_detail.event_id if latest_event_detail else None
+    
+    if event_id:
+        event_details = EventDetail.query.filter_by(event_id=event_id).all()
+        if event_details:
+            event_details_data = []
+            for event_detail in event_details:
+                event_detail_data = event_detail.serialize()
+                event_detail_data["guest_nombre"] = event_detail.guest.nombre if event_detail.guest else None
+                event_detail_data["guest_apellidos"] = event_detail.guest.apellidos if event_detail.guest else None
+                event_detail_data["guest_directive_id"] = event_detail.guest.directive_id if event_detail.guest else None
+                event_detail_data["guest_directive_nombre"] = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else None
+                event_details_data.append(event_detail_data)
+            return jsonify(event_details_data)
+    
+    return jsonify([])
+
+
+
+
+
 @event_detail_bp.route("/event_details", methods=["GET"])
 @jwt_required
 @roles_required(roles=["admin", "user"])
