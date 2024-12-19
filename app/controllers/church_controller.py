@@ -6,14 +6,14 @@ church_bp = Blueprint("church", __name__)
 
 @church_bp.route("/churches", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_churches():
     churches = Church.get_all()
     return jsonify([church.serialize() for church in churches])
 
 @church_bp.route("/churches/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_church(id):
     church = Church.get_by_id(id)
     if church:
@@ -22,7 +22,7 @@ def get_church(id):
 
 @church_bp.route("/churches", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def create_church():
     data = request.json
     nombre = data.get("nombre")
@@ -47,7 +47,7 @@ def create_church():
 
 @church_bp.route("/churches/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def update_church(id):
     church = Church.get_by_id(id)
     if not church:
@@ -72,7 +72,7 @@ def update_church(id):
 
 @church_bp.route("/churches/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def delete_church(id):
     church = Church.get_by_id(id)
     if not church:

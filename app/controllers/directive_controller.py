@@ -6,14 +6,14 @@ directive_bp = Blueprint("directive", __name__)
 
 @directive_bp.route("/directives", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_directives():
     directives = Directive.get_all()
     return jsonify([directive.serialize() for directive in directives])
 
 @directive_bp.route("/directives/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_directive(id):
     directive = Directive.get_by_id(id)
     if directive:
@@ -22,7 +22,7 @@ def get_directive(id):
 
 @directive_bp.route("/directives", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def create_directive():
     data = request.json
     nombre = data.get("nombre")
@@ -34,7 +34,7 @@ def create_directive():
 
 @directive_bp.route("/directives/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def update_directive(id):
     directive = Directive.get_by_id(id)
     if not directive:
@@ -48,7 +48,7 @@ def update_directive(id):
 
 @directive_bp.route("/directives/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def delete_directive(id):
     directive = Directive.get_by_id(id)
     if not directive:

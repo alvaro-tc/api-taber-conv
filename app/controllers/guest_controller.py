@@ -7,7 +7,7 @@ guest_bp = Blueprint("guest", __name__)
 
 @guest_bp.route("/guests", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_guests():
     guests = Guest.get_all()
     guests_data = []
@@ -21,7 +21,7 @@ def get_guests():
 
 @guest_bp.route("/guests/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_guest(id):
     guest = Guest.get_by_id(id)
     if guest:
@@ -34,7 +34,7 @@ def get_guest(id):
 
 @guest_bp.route("/guests", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def create_guest():
     data = request.json
     nombre = data.get("nombre")
@@ -52,7 +52,7 @@ def create_guest():
 
 @guest_bp.route("/guests/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def update_guest(id):
     guest = Guest.get_by_id(id)
     if not guest:
@@ -70,7 +70,7 @@ def update_guest(id):
 
 @guest_bp.route("/guests/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def delete_guest(id):
     guest = Guest.get_by_id(id)
     if not guest:

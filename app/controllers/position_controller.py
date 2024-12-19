@@ -6,14 +6,14 @@ position_bp = Blueprint("position", __name__)
 
 @position_bp.route("/positions", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_positions():
     positions = Position.get_all()
     return jsonify([position.serialize() for position in positions])
 
 @position_bp.route("/positions/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor", "Viewer"])
 def get_position(id):
     position = Position.get_by_id(id)
     if position:
@@ -22,7 +22,7 @@ def get_position(id):
 
 @position_bp.route("/positions", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def create_position():
     data = request.json
     descripcion = data.get("descripcion")
@@ -34,7 +34,7 @@ def create_position():
 
 @position_bp.route("/positions/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def update_position(id):
     position = Position.get_by_id(id)
     if not position:
@@ -46,7 +46,7 @@ def update_position(id):
 
 @position_bp.route("/positions/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def delete_position(id):
     position = Position.get_by_id(id)
     if not position:

@@ -7,14 +7,14 @@ event_bp = Blueprint("event", __name__)
 
 @event_bp.route("/events", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["UserManager", "Viewer"])
 def get_events():
     events = Event.get_all()
     return jsonify([event.serialize() for event in events])
 
 @event_bp.route("/events/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["UserManager", "Viewer"])
 def get_event(id):
     event = Event.get_by_id(id)
     if event:
@@ -23,7 +23,7 @@ def get_event(id):
 
 @event_bp.route("/events", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 def create_event():
     data = request.json
     descripcion = data.get("descripcion")
@@ -41,7 +41,7 @@ def create_event():
 
 @event_bp.route("/events/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 def update_event(id):
     event = Event.get_by_id(id)
     if not event:
@@ -59,7 +59,7 @@ def update_event(id):
 
 @event_bp.route("/events/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 def delete_event(id):
     event = Event.get_by_id(id)
     if not event:

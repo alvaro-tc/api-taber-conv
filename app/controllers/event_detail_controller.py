@@ -16,7 +16,7 @@ event_detail_bp = Blueprint("event_detail", __name__)
 
 @event_detail_bp.route("/event_details/statistics", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor"])
 def get_active_event_detail():
     event_id = EventDetail.get_event_with_estado(0)
     if not event_id:
@@ -54,7 +54,7 @@ def get_active_event_detail():
 
 @event_detail_bp.route("/event_details", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor"])
 def get_event_details():
     event_details = EventDetail.get_all()
     event_details_data = [event_detail.serialize() for event_detail in event_details]
@@ -62,7 +62,7 @@ def get_event_details():
 
 @event_detail_bp.route("/event_details/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor"])
 def get_event_detail(id):
     event_details = EventDetail.query.filter_by(event_id=id).all()
     if event_details:
@@ -78,7 +78,7 @@ def get_event_detail(id):
 
 @event_detail_bp.route("/event_details", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def create_event_detail():
     data = request.json
     hora = data.get("hora", datetime.utcnow())
@@ -94,7 +94,7 @@ def create_event_detail():
 
 @event_detail_bp.route("/event_details/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def update_event_detail(id):
     event_detail = EventDetail.get_by_id(id)
     if not event_detail:
@@ -110,7 +110,7 @@ def update_event_detail(id):
 
 @event_detail_bp.route("/event_details/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["admin"])
+@roles_required(roles=["Editor"])
 def delete_event_detail(id):
     event_detail = EventDetail.get_by_id(id)
     if not event_detail:
@@ -122,7 +122,7 @@ def delete_event_detail(id):
 
 @event_detail_bp.route("/scanner", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin", "user"])
+@roles_required(roles=["Editor"])
 def create_event_detail_from_scanner():
     data = request.json
     
