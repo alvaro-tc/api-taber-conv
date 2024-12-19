@@ -1233,7 +1233,7 @@
         }
       }
     },
-    "/event_details/all": {
+    "/api/event_details/statistics": {
       "get": {
         "tags": ["event_detail"],
         "summary": "Obtiene todos los detalles del evento activo",
