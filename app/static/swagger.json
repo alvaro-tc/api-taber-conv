@@ -1233,6 +1233,38 @@
         }
       }
     },
+    "/event_details/all": {
+      "get": {
+        "tags": ["event_detail"],
+        "summary": "Obtiene todos los detalles del evento activo",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del evento obtenidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventDetail"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evento no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
     "/api/directives": {
       "get": {
         "tags": ["directive"],
