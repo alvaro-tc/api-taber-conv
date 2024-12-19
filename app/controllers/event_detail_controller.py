@@ -122,7 +122,7 @@ def delete_event_detail(id):
 
 @event_detail_bp.route("/scanner", methods=["POST"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(roles=["Scanner","Editor"])
 def create_event_detail_from_scanner():
     data = request.json
     
