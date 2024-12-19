@@ -122,7 +122,7 @@ def logout_user():
 
 @user_bp.route("/users", methods=["GET"])
 @jwt_required()
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 def get_all_users():
     users = User.query.all()
     result = UserSchema(many=True).dump(users)
@@ -160,7 +160,7 @@ def get_user_by_id(user_id):
 
 @user_bp.route("/users/<int:user_id>", methods=["PUT"])
 @jwt_required()
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 def update_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -196,7 +196,7 @@ def update_user(user_id):
 
 
 @user_bp.route("/users", methods=["PUT"])
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 @jwt_required()
 def update_current_user():
     user = current_user
@@ -228,7 +228,7 @@ def update_current_user():
 
 
 @user_bp.route("/users/<int:user_id>", methods=["DELETE"])
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 @jwt_required()
 def delete_user_by_id(user_id):
     user = User.query.get(user_id)
@@ -240,7 +240,7 @@ def delete_user_by_id(user_id):
 
 
 @user_bp.route("/user", methods=["DELETE"])
-@roles_required(roles=["admin"])
+@roles_required(roles=["UserManager"])
 @jwt_required()
 def delete_current_user():
     user = current_user

@@ -32,7 +32,7 @@ class EventDetail(db.Model):
     @staticmethod
     def get_event_with_estado(estado):
         event = Event.query.filter_by(estado=estado).filter(
-            Event.descripcion.in_(["Asistencia Mañana", "Asistencia Tarde"])
+            Event.descripcion.in_(["Asistencia Mañana", "Asistencia Tarde", "Cena", "Almuerzo", "Desayuno", "Refrigerio", "Merienda"])
         ).first()
         return event.id if event else None
         

@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
     
     
     
-    def __init__(self, email, password, roles=["user"]):
+    def __init__(self, email, password, roles=["viewer"]):
         self.email = email
         self.roles = json.dumps(roles)
         

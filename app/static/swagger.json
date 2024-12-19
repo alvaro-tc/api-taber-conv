@@ -1572,7 +1572,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["admin", "user"]
+              "enum": ["Viewer", "Scanner", "Scanner", "UserManager"]
             }
           }
         },

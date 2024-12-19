@@ -33,7 +33,7 @@ class Event(db.Model):
         db.session.commit()
 
     def _is_duplicate_event(self, estado, descripcion):
-        estado_no_rep = ["Asistencia Mañana", "Asistencia Tarde"]
+        estado_no_rep = ["Asistencia Mañana", "Asistencia Tarde", "Cena", "Almuerzo", "Desayuno", "Refrigerio", "Merienda"]
         if estado == 0 and descripcion in estado_no_rep:
             existing_event = Event.query.filter_by(estado=0).filter(Event.descripcion.in_(estado_no_rep)).first()
             if existing_event:
