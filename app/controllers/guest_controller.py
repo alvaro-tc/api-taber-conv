@@ -44,9 +44,17 @@ def create_guest():
     position_id = data.get("position_id")
     church_id = data.get("church_id")
     directive_id = data.get("directive_id")
-    if not nombre or not apellidos or not position_id:
+    if not nombre or not apellidos:
         return jsonify({"error": "Faltan datos requeridos"}), 400
-    guest = Guest(nombre=nombre, apellidos=apellidos, email=email, telefono=telefono, position_id=position_id, church_id=church_id, directive_id=directive_id)
+    guest = Guest(
+        nombre=nombre, 
+        apellidos=apellidos, 
+        email=email, 
+        telefono=telefono, 
+        position_id=position_id if position_id is not None else None, 
+        church_id=church_id if church_id is not None else None, 
+        directive_id=directive_id if directive_id is not None else None
+    )
     guest.save()
     return jsonify(guest.serialize()), 201
 
@@ -65,7 +73,15 @@ def update_guest(id):
     position_id = data.get("position_id")
     church_id = data.get("church_id")
     directive_id = data.get("directive_id")
-    guest.update(nombre=nombre, apellidos=apellidos, email=email, telefono=telefono, position_id=position_id, church_id=church_id, directive_id=directive_id)
+    guest.update(
+        nombre=nombre, 
+        apellidos=apellidos, 
+        email=email, 
+        telefono=telefono, 
+        position_id=position_id if position_id is not None else None, 
+        church_id=church_id if church_id is not None else None, 
+        directive_id=directive_id if directive_id is not None else None
+    )
     return jsonify(guest.serialize())
 
 @guest_bp.route("/guests/<int:id>", methods=["DELETE"])

@@ -15,6 +15,8 @@ class EventDetail(db.Model):
     guest_id = db.Column(db.Integer, db.ForeignKey('guests.id', ondelete='CASCADE'), nullable=False)
     observaciones = db.Column(db.String(255), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    
+
 
     event = db.relationship('Event', back_populates='event_details')
     guest = db.relationship('Guest', back_populates='event_details')
