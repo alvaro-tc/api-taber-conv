@@ -6,17 +6,10 @@ from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 from flask_jwt_extended import current_user
 
-
 event_detail_bp = Blueprint("event_detail", __name__)
-
-
-
-
-
 
 @event_detail_bp.route("/event_details/statistics", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor"])
 def get_active_event_detail():
     event_id = EventDetail.get_event_with_estado(0)
     if not event_id:
@@ -26,6 +19,7 @@ def get_active_event_detail():
     if event_id:
         event = Event.query.get(event_id)
         event_description = event.descripcion if event else None
+        qr_available = event.qr_available if event else None
         event_details = EventDetail.query.filter_by(event_id=event_id).all()
         if event_details:
             directive_counts = {}
@@ -46,11 +40,11 @@ def get_active_event_detail():
             return jsonify({
                 "event_id": event_id,
                 "event_description": event_description,
+                "qr_available": qr_available,
                 "event_details": directive_counts
             })
     
     return jsonify([])
-
 
 @event_detail_bp.route("/event_details", methods=["GET"])
 @jwt_required
@@ -74,7 +68,6 @@ def get_event_detail(id):
             event_details_data.append(event_detail_data)
         return jsonify(event_details_data)
     return jsonify([])
-
 
 @event_detail_bp.route("/event_details", methods=["POST"])
 @jwt_required
@@ -118,11 +111,9 @@ def delete_event_detail(id):
     event_detail.delete()
     return "", 204
 
-
-
 @event_detail_bp.route("/scanner", methods=["POST"])
 @jwt_required
-@roles_required(roles=["Scanner","Editor"])
+@roles_required(roles=["Scanner", "Editor"])
 def create_event_detail_from_scanner():
     data = request.json
     
@@ -163,5 +154,6 @@ def create_event_detail_from_scanner():
     response = event_detail.serialize()
     response["guest_nombre"] = guest.nombre + " " + guest.apellidos
     response["event_descripcion"] = event.descripcion
+    response["qr_available"] = event.qr_available
     
     return jsonify(response), 201

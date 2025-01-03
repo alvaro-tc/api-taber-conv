@@ -15,7 +15,7 @@ class EventDetail(db.Model):
     guest_id = db.Column(db.Integer, db.ForeignKey('guests.id', ondelete='CASCADE'), nullable=False)
     observaciones = db.Column(db.String(255), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    
+
 
 
     event = db.relationship('Event', back_populates='event_details')
@@ -33,9 +33,7 @@ class EventDetail(db.Model):
     
     @staticmethod
     def get_event_with_estado(estado):
-        event = Event.query.filter_by(estado=estado).filter(
-            Event.descripcion.in_(["Asistencia Mañana", "Asistencia Tarde", "Cena", "Almuerzo", "Desayuno", "Refrigerio", "Merienda"])
-        ).first()
+        event = Event.query.filter_by(estado=estado, qr_available=True).first()
         return event.id if event else None
         
     

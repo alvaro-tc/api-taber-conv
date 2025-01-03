@@ -1497,6 +1497,9 @@
           "fecha": {
             "type": "string",
             "format": "date"
+          },
+          "qr_available": {
+            "type": "boolean"
           }
         },
         "required": ["descripcion", "estado", "fecha"]

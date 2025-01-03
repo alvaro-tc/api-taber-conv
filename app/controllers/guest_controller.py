@@ -37,6 +37,8 @@ def get_guest(id):
 @roles_required(roles=["Editor"])
 def create_guest():
     data = request.json
+    print("DATA")
+    print(data)
     nombre = data.get("nombre")
     apellidos = data.get("apellidos")
     email = data.get("email")
@@ -51,12 +53,15 @@ def create_guest():
         apellidos=apellidos, 
         email=email, 
         telefono=telefono, 
-        position_id=position_id if position_id is not None else None, 
-        church_id=church_id if church_id is not None else None, 
+        position_id=position_id if position_id not in [None, 0] else None, 
+        church_id=church_id if church_id not in [None, 0] else None, 
         directive_id=directive_id if directive_id is not None else None
     )
+    
     guest.save()
     return jsonify(guest.serialize()), 201
+
+
 
 @guest_bp.route("/guests/<int:id>", methods=["PUT"])
 @jwt_required
