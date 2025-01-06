@@ -25,10 +25,11 @@ def get_active_event_detail():
         directive_counts = {}
         
         directives = Directive.query.all()
-    
+        
         for directive in directives:
             directive_nombre = directive.nombre
-            directive_counts[directive_nombre] = {"asistencia": 0, "total": Guest.query.filter_by(directive_id=directive.id).count()}
+            total= Guest.query.filter_by(directive_id=directive.id).count()
+            directive_counts[directive_nombre] = {"asistencia": 0, "total": total}
             
         directive_counts["Iglesias"] = {"asistencia": 0, "total": Guest.query.filter(Guest.directive_id.is_(None)).count()}
         if event_details:
@@ -46,7 +47,7 @@ def get_active_event_detail():
             else:
                 directive_id = next((event_detail.guest.directive_id for event_detail in event_details if event_detail.guest and event_detail.guest.directive and event_detail.guest.directive.nombre == directive_nombre), None)
                 total_guests = Guest.query.filter_by(directive_id=directive_id).count() if directive_id else 0
-            directive_counts[directive_nombre]["total"] = total_guests
+
         
 
         return jsonify({
