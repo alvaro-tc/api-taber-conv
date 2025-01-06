@@ -26,12 +26,11 @@ def get_active_event_detail():
         
         directives = Directive.query.all()
     
-        
         for directive in directives:
             directive_nombre = directive.nombre
-            directive_counts[directive_nombre] = {"asistencia": 0, "total": 0}
-        directive_counts["Iglesias"] = {"asistencia": 0, "total": 0}
-        
+            directive_counts[directive_nombre] = {"asistencia": 0, "total": Guest.query.filter_by(directive_id=directive.id).count()}
+            
+        directive_counts["Iglesias"] = {"asistencia": 0, "total": Guest.query.filter(Guest.directive_id.is_(None)).count()}
         if event_details:
             for event_detail in event_details:
                 directive_id = event_detail.guest.directive_id if event_detail.guest else None
