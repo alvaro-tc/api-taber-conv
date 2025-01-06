@@ -25,18 +25,18 @@ def get_active_event_detail():
             directive_counts = {}
             for event_detail in event_details:
                 directive_id = event_detail.guest.directive_id if event_detail.guest else None
-                directive_nombre = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else None
-                if directive_id and directive_nombre:
-                    if directive_nombre not in directive_counts:
-                        directive_counts[directive_nombre] = {"asistencia": 0, "total": 0}
-                    directive_counts[directive_nombre]["asistencia"] += 1
+                directive_nombre = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else "Iglesias"
+                if directive_nombre not in directive_counts:
+                    directive_counts[directive_nombre] = {"asistencia": 0, "total": 0}
+                directive_counts[directive_nombre]["asistencia"] += 1
             
             for directive_nombre in directive_counts:
-                directive_id = next((event_detail.guest.directive_id for event_detail in event_details if event_detail.guest and event_detail.guest.directive and event_detail.guest.directive.nombre == directive_nombre), None)
-                if directive_id:
-                    total_guests = Guest.query.filter_by(directive_id=directive_id).count()
-                    directive_counts[directive_nombre]["total"] = total_guests
-            
+                if directive_nombre == "Iglesias":
+                    total_guests = Guest.query.filter(Guest.directive_id.is_(None)).count()
+                else:
+                    directive_id = next((event_detail.guest.directive_id for event_detail in event_details if event_detail.guest and event_detail.guest.directive and event_detail.guest.directive.nombre == directive_nombre), None)
+                    total_guests = Guest.query.filter_by(directive_id=directive_id).count() if directive_id else 0
+                directive_counts[directive_nombre]["total"] = total_guests
             return jsonify({
                 "event_id": event_id,
                 "event_description": event_description,
