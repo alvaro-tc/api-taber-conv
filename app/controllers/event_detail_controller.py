@@ -5,6 +5,7 @@ from app.models.event_model import Event
 from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 from flask_jwt_extended import current_user
+from app.models.directive_model import Directive
 
 event_detail_bp = Blueprint("event_detail", __name__)
 
@@ -23,13 +24,17 @@ def get_active_event_detail():
         event_details = EventDetail.query.filter_by(event_id=event_id).all()
         directive_counts = {}
         
+        directives = Directive.query.all()
+        for directive in directives:
+            directive_nombre = directive.nombre
+            directive_counts[directive_nombre] = {"asistencia": 0, "total": 0}
+
         if event_details:
             for event_detail in event_details:
-                    directive_id = event_detail.guest.directive_id if event_detail.guest else None
-                    directive_nombre = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else "Iglesias"
-            if directive_nombre not in directive_counts:
-                directive_counts[directive_nombre] = {"asistencia": 0, "total": 0}
-            directive_counts[directive_nombre]["asistencia"] += 1
+                directive_id = event_detail.guest.directive_id if event_detail.guest else None
+                directive_nombre = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else "Iglesias"
+                if directive_nombre in directive_counts:
+                    directive_counts[directive_nombre]["asistencia"] += 1
         
         for directive_nombre in directive_counts:
             if directive_nombre == "Iglesias":
