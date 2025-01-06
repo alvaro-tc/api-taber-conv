@@ -42,8 +42,12 @@ def get_active_event_detail():
             else:
                 directive_id = next((event_detail.guest.directive_id for event_detail in event_details if event_detail.guest and event_detail.guest.directive and event_detail.guest.directive.nombre == directive_nombre), None)
                 total_guests = Guest.query.filter_by(directive_id=directive_id).count() if directive_id else 0
-                directive_counts[directive_nombre]["total"] = total_guests
+            directive_counts[directive_nombre]["total"] = total_guests
         
+        # Ensure that if there are no records, asistencia is set to 0
+        for directive_nombre in directive_counts:
+            if directive_counts[directive_nombre]["asistencia"] == 0:
+                directive_counts[directive_nombre]["asistencia"] = 0
         
         return jsonify({
             "event_id": event_id,
@@ -51,7 +55,6 @@ def get_active_event_detail():
             "qr_available": qr_available,
             "event_details": directive_counts
         })
-    
     return jsonify([])
 
 @event_detail_bp.route("/event_details", methods=["GET"])
