@@ -75,6 +75,10 @@ def get_event_details_with_guests(event_id):
     guests_data = []
     for guest in guests:
         guest_data = guest.serialize()
+        guest_data["church_name"] = guest.church.nombre if guest.church else None
+        guest_data["departamento"] = guest.church.departamento if guest.church else None
+        guest_data["position_description"] = guest.position.descripcion if guest.position else None
+        guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
         if guest.id in event_guest_ids:
             detalle = EventDetail.query.filter_by(guest_id=guest.id).first()
             guest_data["hora"] = detalle.hora
@@ -87,7 +91,6 @@ def get_event_details_with_guests(event_id):
         guests_data.append(guest_data)
     
     return jsonify(guests_data)
-
 @event_detail_bp.route("/event_details/<int:id>/<int:id2>", methods=["GET"])
 @jwt_required
 @roles_required(["Editor"])
