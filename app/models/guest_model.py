@@ -24,11 +24,10 @@ class Guest(db.Model):
     directive_id = db.Column(db.Integer, db.ForeignKey('directives.id', ondelete='CASCADE'), nullable=True)
     directive = db.relationship('Directive', back_populates='guests')
 
-    # Relación con la tabla "payments"
-    payment_id = db.Column(db.Integer, db.ForeignKey('payments.id', ondelete='CASCADE'), nullable=True)
-    payment = db.relationship('Payment', back_populates='guests')
+    
     
     event_details = db.relationship('EventDetail', back_populates='guest')
+    payment = db.relationship('Payment', back_populates='guest')
     
     @staticmethod
     def get_all():
