@@ -100,3 +100,24 @@ def delete_guest(id):
         return jsonify({"error": "Invitado no encontrado"}), 404
     guest.delete()
     return "", 204
+
+
+
+@guest_bp.route("/guests/qrcode", methods=["POST"])
+@jwt_required
+@roles_required(roles=["Scanner", "Editor"])
+def create_event_detail_from_scanner():
+    data = request.json
+    guest_id = data.get("guest_id")
+    guest_code = data.get("guest_code")
+    guest = Guest.get_by_id(guest_id)
+    if not guest:
+        return jsonify({"error": "Invitado no encontrado"}), 404
+    guest.update(
+        code=guest_code
+    )
+    if not guest_id or not guest_code:
+        return jsonify({"error": "QR invalido"}), 400
+
+    response = guest.serialize()
+    return jsonify(response), 201

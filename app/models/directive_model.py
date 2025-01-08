@@ -20,8 +20,9 @@ class Directive(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, nombre):
-        self.nombre = nombre
+    def update(self, nombre=None):
+        if nombre is not None:
+            self.nombre = nombre
         db.session.commit()
 
     def delete(self):

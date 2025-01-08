@@ -13,10 +13,11 @@ event_detail_bp = Blueprint("event_detail", __name__)
 @jwt_required
 def get_active_event_detail():
     event_id = EventDetail.get_event_with_estado(0)
-    if not event_id:
-        latest_event_detail = EventDetail.query.order_by(EventDetail.created_at.desc()).first()
-        event_id = latest_event_detail.event_id if latest_event_detail else 1
-    
+    print(event_id)
+    if event_id == None:
+        latest_event = Event.query.filter_by(qr_available=1).first()
+        event_id = latest_event.id if latest_event else 1
+        
     if event_id:
         event = Event.query.get(event_id)
         event_description = event.descripcion if event else None
@@ -39,7 +40,6 @@ def get_active_event_detail():
                 if directive_nombre in directive_counts:
                     directive_counts[directive_nombre]["asistencia"] += 1
         
-        
         for directive_nombre in directive_counts:
             if directive_nombre == "IGLESIAS":
                 total_guests = Guest.query.filter(Guest.directive_id.is_(None)).count()
@@ -47,8 +47,6 @@ def get_active_event_detail():
             else:
                 directive_id = next((event_detail.guest.directive_id for event_detail in event_details if event_detail.guest and event_detail.guest.directive and event_detail.guest.directive.nombre == directive_nombre), None)
                 total_guests = Guest.query.filter_by(directive_id=directive_id).count() if directive_id else 0
-
-        
 
         return jsonify({
             "event_id": event_id,
@@ -60,7 +58,7 @@ def get_active_event_detail():
 
 @event_detail_bp.route("/event_details", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def get_event_details():
     event_details = EventDetail.get_all()
     event_details_data = [event_detail.serialize() for event_detail in event_details]
@@ -68,7 +66,7 @@ def get_event_details():
 
 @event_detail_bp.route("/event_details/<int:event_id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def get_event_details_with_guests(event_id):
     guests = Guest.query.all()
     event_details = EventDetail.query.filter_by(event_id=event_id).all()
@@ -90,13 +88,9 @@ def get_event_details_with_guests(event_id):
     
     return jsonify(guests_data)
 
-
-
-
-
 @event_detail_bp.route("/event_details/<int:id>/<int:id2>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def get_event_detail_by_directive(id):
     event_details = EventDetail.query.filter_by(event_id=id).all()
     if event_details:
@@ -109,16 +103,9 @@ def get_event_detail_by_directive(id):
         return jsonify(event_details_data)
     return jsonify([])
 
-
-
-
-
-
-
-
 @event_detail_bp.route("/event_details", methods=["POST"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def create_event_detail():
     data = request.json
     hora = data.get("hora", datetime.utcnow())
@@ -134,7 +121,7 @@ def create_event_detail():
 
 @event_detail_bp.route("/event_details/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def update_event_detail(id):
     event_detail = EventDetail.get_by_id(id)
     if not event_detail:
@@ -150,7 +137,7 @@ def update_event_detail(id):
 
 @event_detail_bp.route("/event_details/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def delete_event_detail(id):
     event_detail = EventDetail.get_by_id(id)
     if not event_detail:
@@ -160,14 +147,14 @@ def delete_event_detail(id):
 
 @event_detail_bp.route("/scanner", methods=["POST"])
 @jwt_required
-@roles_required(roles=["Scanner", "Editor"])
+@roles_required(["Scanner", "Editor"])
 def create_event_detail_from_scanner():
     data = request.json
     
-    guest_id = data.get("guest_id")
+    guest_code = data.get("guest_code")
     observaciones = data.get("observaciones")
     
-    if not guest_id:
+    if not guest_code:
         return jsonify({"error": "QR invalido"}), 400
     
     # Buscar el evento con estado 0
@@ -180,7 +167,7 @@ def create_event_detail_from_scanner():
     user_id = user.id
     
     # Obtener el guest
-    guest = Guest.query.get(guest_id)
+    guest = Guest.query.filter_by(code=guest_code).first()
     if not guest:
         return jsonify({"error": "Invitado no encontrado"}), 404
     
@@ -192,7 +179,7 @@ def create_event_detail_from_scanner():
     event_detail = EventDetail(
         hora=datetime.utcnow(),
         event_id=event_id,
-        guest_id=guest_id,
+        guest_id=guest.id,
         observaciones=observaciones,
         user_id=user_id
     )

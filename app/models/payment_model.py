@@ -26,11 +26,15 @@ class Payment(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, monto1, monto2, observaciones1, observaciones2):
-        self.monto1 = monto1
-        self.monto2 = monto2
-        self.observaciones1 = observaciones1
-        self.observaciones2 = observaciones2
+    def update(self, monto1=None, monto2=None, observaciones1=None, observaciones2=None):
+        if monto1 is not None:
+            self.monto1 = monto1
+        if monto2 is not None:
+            self.monto2 = monto2
+        if observaciones1 is not None:
+            self.observaciones1 = observaciones1
+        if observaciones2 is not None:
+            self.observaciones2 = observaciones2
         db.session.commit()
 
     def delete(self):

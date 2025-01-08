@@ -20,8 +20,9 @@ class Position(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, descripcion):
-        self.descripcion = descripcion
+    def update(self, descripcion=None):
+        if descripcion is not None:
+            self.descripcion = descripcion
         db.session.commit()
 
     def delete(self):

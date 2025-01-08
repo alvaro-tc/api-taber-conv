@@ -25,16 +25,20 @@ class Event(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, descripcion, estado, fecha, qr_available):
+    def update(self, descripcion=None, estado=None, fecha=None, qr_available=None):
         if estado == 0 and qr_available == True:
             existing_event = Event.query.filter_by(estado=0).first()
-            if existing_event:
+            if existing_event and existing_event.id != self.id:
                 raise ValueError("Ya existe un evento con estado 0 y la misma descripción")
     
-        self.descripcion = descripcion
-        self.estado = estado
-        self.fecha = fecha
-        self.qr_available = qr_available
+        if descripcion is not None:
+            self.descripcion = descripcion
+        if estado is not None:
+            self.estado = estado
+        if fecha is not None:
+            self.fecha = fecha
+        if qr_available is not None:
+            self.qr_available = qr_available
         db.session.commit()
         
         

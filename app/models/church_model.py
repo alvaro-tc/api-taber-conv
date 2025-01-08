@@ -38,13 +38,19 @@ class Church(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, nombre, departamento, area, localidad, direccion, code):
-        self.nombre = nombre
-        self.departamento = departamento
-        self.area = area
-        self.localidad = localidad
-        self.direccion = direccion
-        self.code = code
+    def update(self, nombre=None, departamento=None, area=None, localidad=None, direccion=None, code=None):
+        if nombre is not None:
+            self.nombre = nombre
+        if departamento is not None:
+            self.departamento = departamento
+        if area is not None:
+            self.area = area
+        if localidad is not None:
+            self.localidad = localidad
+        if direccion is not None:
+            self.direccion = direccion
+        if code is not None:
+            self.code = code
         db.session.commit()
 
     def delete(self):

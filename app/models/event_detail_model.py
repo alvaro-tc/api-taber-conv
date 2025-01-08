@@ -61,30 +61,37 @@ class EventDetail(db.Model):
         db.session.add(self)
         db.session.commit()
         
-    def update(self, hora, event_id, guest_id, observaciones, user_id):
-        if not Guest.query.get(guest_id):
+    def update(self, hora=None, event_id=None, guest_id=None, observaciones=None, user_id=None):
+        if guest_id and not Guest.query.get(guest_id):
             raise ValueError("El guest_id proporcionado no existe")
-        if not User.query.get(user_id):
+        if user_id and not User.query.get(user_id):
             raise ValueError("El user_id proporcionado no existe")
         
         # Verificar si ya existe un EventDetail con el mismo event_id y guest_id
-        existing_event_detail = EventDetail.query.filter_by(event_id=event_id, guest_id=guest_id).first()
-        if existing_event_detail and existing_event_detail.id != self.id:
-            event = Event.query.get(existing_event_detail.event_id)
-            guest = Guest.query.get(existing_event_detail.guest_id)
-            nombre_completo = f"{guest.nombre} {guest.apellidos}" if guest else "anonimo"
-            descripcion = event.descripcion
-            
-            raise ValueError(nombre_completo + " ya fue registrado en el evento: " + descripcion + "a las " + existing_event_detail.hora.isoformat())
+        if event_id and guest_id:
+            existing_event_detail = EventDetail.query.filter_by(event_id=event_id, guest_id=guest_id).first()
+            if existing_event_detail and existing_event_detail.id != self.id:
+                event = Event.query.get(existing_event_detail.event_id)
+                guest = Guest.query.get(existing_event_detail.guest_id)
+                nombre_completo = f"{guest.nombre} {guest.apellidos}" if guest else "anonimo"
+                descripcion = event.descripcion
+                
+                raise ValueError(nombre_completo + " ya fue registrado en el evento: " + descripcion + " a las " + existing_event_detail.hora.isoformat())
         
         # Ajustar la hora a la zona horaria de Bolivia (UTC-4)
-        bolivia_tz = pytz.timezone('America/La_Paz')
-        self.hora = hora.astimezone(bolivia_tz)
+        if hora:
+            bolivia_tz = pytz.timezone('America/La_Paz')
+            self.hora = hora.astimezone(bolivia_tz)
         
-        self.event_id = event_id
-        self.guest_id = guest_id
-        self.observaciones = observaciones
-        self.user_id = user_id
+        if event_id:
+            self.event_id = event_id
+        if guest_id:
+            self.guest_id = guest_id
+        if observaciones is not None:
+            self.observaciones = observaciones
+        if user_id:
+            self.user_id = user_id
+        
         db.session.commit()
         
         

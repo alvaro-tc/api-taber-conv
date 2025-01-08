@@ -42,15 +42,23 @@ class Guest(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, nombre, apellidos, email, telefono, position_id, church_id, directive_id, code):
-        self.nombre = nombre
-        self.apellidos = apellidos
-        self.email = email
-        self.telefono = telefono
-        self.position_id = position_id
-        self.church_id = church_id
-        self.directive_id = directive_id
-        self.code = code
+    def update(self, nombre=None, apellidos=None, email=None, telefono=None, position_id=None, church_id=None, directive_id=None, code=None):
+        if nombre is not None:
+            self.nombre = nombre
+        if apellidos is not None:
+            self.apellidos = apellidos
+        if email is not None:
+            self.email = email
+        if telefono is not None:
+            self.telefono = telefono
+        if position_id is not None:
+            self.position_id = position_id
+        if church_id is not None:
+            self.church_id = church_id
+        if directive_id is not None:
+            self.directive_id = directive_id
+        if code is not None:
+            self.code = code
         db.session.commit()
 
     def delete(self):
