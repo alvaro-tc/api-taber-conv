@@ -6,14 +6,14 @@ church_bp = Blueprint("church", __name__)
 
 @church_bp.route("/churches", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor", "Viewer"])
+@roles_required(["Editor", "Viewer"])
 def get_churches():
     churches = Church.get_all()
     return jsonify([church.serialize() for church in churches])
 
 @church_bp.route("/churches/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor", "Viewer"])
+@roles_required(["Editor", "Viewer"])
 def get_church(id):
     church = Church.get_by_id(id)
     if church:
@@ -22,7 +22,7 @@ def get_church(id):
 
 @church_bp.route("/churches", methods=["POST"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def create_church():
     data = request.json
     nombre = data.get("nombre")
@@ -30,24 +30,25 @@ def create_church():
     area = data.get("area")
     localidad = data.get("localidad")
     direccion = data.get("direccion")
+    code = data.get("code")
     
     valid_departamentos = ['Chuquisaca', 'La Paz', 'Cochabamba', 'Oruro', 'Potosi', 'Tarija', 'Santa Cruz', 'Beni', 'Pando']
     valid_areas = ['URBANO', 'RURAL']
     
-    if not nombre or not departamento or not area:
+    if not nombre or not departamento or not area or not code:
         return jsonify({"error": "Faltan datos requeridos"}), 400
     if departamento not in valid_departamentos:
         return jsonify({"error": "Departamento no válido"}), 400
     if area not in valid_areas:
         return jsonify({"error": "Área no válida"}), 400
     
-    church = Church(nombre=nombre, departamento=departamento, area=area, localidad=localidad, direccion=direccion)
+    church = Church(nombre=nombre, departamento=departamento, area=area, localidad=localidad, direccion=direccion, code=code)
     church.save()
     return jsonify(church.serialize()), 201
 
 @church_bp.route("/churches/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def update_church(id):
     church = Church.get_by_id(id)
     if not church:
@@ -58,6 +59,7 @@ def update_church(id):
     area = data.get("area")
     localidad = data.get("localidad")
     direccion = data.get("direccion")
+    code = data.get("code")
     
     valid_departamentos = ['Chuquisaca', 'La Paz', 'Cochabamba', 'Oruro', 'Potosi', 'Tarija', 'Santa Cruz', 'Beni', 'Pando']
     valid_areas = ['URBANO', 'RURAL']
@@ -67,12 +69,12 @@ def update_church(id):
     if area and area not in valid_areas:
         return jsonify({"error": "Área no válida"}), 400
     
-    church.update(nombre=nombre, departamento=departamento, area=area, localidad=localidad, direccion=direccion)
+    church.update(nombre=nombre, departamento=departamento, area=area, localidad=localidad, direccion=direccion, code=code)
     return jsonify(church.serialize())
 
 @church_bp.route("/churches/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def delete_church(id):
     church = Church.get_by_id(id)
     if not church:

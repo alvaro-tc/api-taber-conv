@@ -22,6 +22,7 @@ class Church(db.Model):
     
     localidad = db.Column(db.Text, nullable=True)
     direccion = db.Column(db.Text, nullable=True)
+    code = db.Column(db.Integer, unique=True, nullable=True)  # Nuevo campo añadido
     
     guests = db.relationship('Guest', back_populates='church')
 
@@ -37,12 +38,13 @@ class Church(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, nombre, departamento, area, localidad, direccion):
+    def update(self, nombre, departamento, area, localidad, direccion, code):
         self.nombre = nombre
         self.departamento = departamento
         self.area = area
         self.localidad = localidad
         self.direccion = direccion
+        self.code = code
         db.session.commit()
 
     def delete(self):
@@ -56,5 +58,6 @@ class Church(db.Model):
             'departamento': self.departamento,
             'area': self.area,
             'localidad': self.localidad,
-            'direccion': self.direccion
+            'direccion': self.direccion,
+            'code': self.code  # Nuevo campo añadido
         }

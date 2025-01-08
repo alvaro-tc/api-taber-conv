@@ -15,7 +15,7 @@ def get_active_event_detail():
     event_id = EventDetail.get_event_with_estado(0)
     if not event_id:
         latest_event_detail = EventDetail.query.order_by(EventDetail.created_at.desc()).first()
-        event_id = latest_event_detail.event_id if latest_event_detail else None
+        event_id = latest_event_detail.event_id if latest_event_detail else 1
     
     if event_id:
         event = Event.query.get(event_id)
@@ -31,17 +31,17 @@ def get_active_event_detail():
             total= Guest.query.filter_by(directive_id=directive.id).count()
             directive_counts[directive_nombre] = {"asistencia": 0, "total": total}
             
-        directive_counts["Iglesias"] = {"asistencia": 0, "total": Guest.query.filter(Guest.directive_id.is_(None)).count()}
+        directive_counts["IGLESIAS"] = {"asistencia": 0, "total": Guest.query.filter(Guest.directive_id.is_(None)).count()}
         if event_details:
             for event_detail in event_details:
                 directive_id = event_detail.guest.directive_id if event_detail.guest else None
-                directive_nombre = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else "Iglesias"
+                directive_nombre = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else "IGLESIAS"
                 if directive_nombre in directive_counts:
                     directive_counts[directive_nombre]["asistencia"] += 1
         
         
         for directive_nombre in directive_counts:
-            if directive_nombre == "Iglesias":
+            if directive_nombre == "IGLESIAS":
                 total_guests = Guest.query.filter(Guest.directive_id.is_(None)).count()
                 if not total_guests: total_guests = 0
             else:
@@ -66,10 +66,38 @@ def get_event_details():
     event_details_data = [event_detail.serialize() for event_detail in event_details]
     return jsonify(event_details_data)
 
-@event_detail_bp.route("/event_details/<int:id>", methods=["GET"])
+@event_detail_bp.route("/event_details/<int:event_id>", methods=["GET"])
 @jwt_required
 @roles_required(roles=["Editor"])
-def get_event_detail(id):
+def get_event_details_with_guests(event_id):
+    guests = Guest.query.all()
+    event_details = EventDetail.query.filter_by(event_id=event_id).all()
+    event_guest_ids = {event_detail.guest_id for event_detail in event_details}
+    
+    guests_data = []
+    for guest in guests:
+        guest_data = guest.serialize()
+        if guest.id in event_guest_ids:
+            detalle = EventDetail.query.filter_by(guest_id=guest.id).first()
+            guest_data["hora"] = detalle.hora
+            guest_data["observaciones"] = detalle.observaciones
+            guest_data["asistencia"] = 1
+        else:
+            guest_data["hora"] = None
+            guest_data["observaciones"] = None
+            guest_data["asistencia"] = 0
+        guests_data.append(guest_data)
+    
+    return jsonify(guests_data)
+
+
+
+
+
+@event_detail_bp.route("/event_details/<int:id>/<int:id2>", methods=["GET"])
+@jwt_required
+@roles_required(roles=["Editor"])
+def get_event_detail_by_directive(id):
     event_details = EventDetail.query.filter_by(event_id=id).all()
     if event_details:
         event_details_data = []
@@ -80,6 +108,13 @@ def get_event_detail(id):
             event_details_data.append(event_detail_data)
         return jsonify(event_details_data)
     return jsonify([])
+
+
+
+
+
+
+
 
 @event_detail_bp.route("/event_details", methods=["POST"])
 @jwt_required

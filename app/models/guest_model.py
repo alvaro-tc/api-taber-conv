@@ -10,6 +10,7 @@ class Guest(db.Model):
     email = db.Column(db.String(255), nullable=True)
     telefono = db.Column(db.String(20), nullable=True)
     fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=True)
+    code = db.Column(db.Integer, unique=True, nullable=True)  # Nuevo campo añadido
     
     # Relación con la tabla "positions"
     position_id = db.Column(db.Integer, db.ForeignKey('positions.id', ondelete='CASCADE'), nullable=True)
@@ -23,6 +24,10 @@ class Guest(db.Model):
     directive_id = db.Column(db.Integer, db.ForeignKey('directives.id', ondelete='CASCADE'), nullable=True)
     directive = db.relationship('Directive', back_populates='guests')
 
+    # Relación con la tabla "payments"
+    payment_id = db.Column(db.Integer, db.ForeignKey('payments.id', ondelete='CASCADE'), nullable=True)
+    payment = db.relationship('Payment', back_populates='guests')
+    
     event_details = db.relationship('EventDetail', back_populates='guest')
     
     @staticmethod
@@ -37,7 +42,7 @@ class Guest(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, nombre, apellidos, email, telefono, position_id, church_id, directive_id):
+    def update(self, nombre, apellidos, email, telefono, position_id, church_id, directive_id, code):
         self.nombre = nombre
         self.apellidos = apellidos
         self.email = email
@@ -45,6 +50,7 @@ class Guest(db.Model):
         self.position_id = position_id
         self.church_id = church_id
         self.directive_id = directive_id
+        self.code = code
         db.session.commit()
 
     def delete(self):
@@ -61,5 +67,6 @@ class Guest(db.Model):
             'fecha_registro': self.fecha_registro.isoformat(),
             'position_id': self.position_id,
             'church_id': self.church_id,
-            'directive_id': self.directive_id
+            'directive_id': self.directive_id,
+            'code': self.code  # Nuevo campo añadido
         }

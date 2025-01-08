@@ -7,7 +7,7 @@ guest_bp = Blueprint("guest", __name__)
 
 @guest_bp.route("/guests", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor", "Viewer"])
+@roles_required(["Editor", "Viewer"])
 def get_guests():
     guests = Guest.get_all()
     guests_data = []
@@ -21,7 +21,7 @@ def get_guests():
 
 @guest_bp.route("/guests/<int:id>", methods=["GET"])
 @jwt_required
-@roles_required(roles=["Editor", "Viewer"])
+@roles_required(["Editor", "Viewer"])
 def get_guest(id):
     guest = Guest.get_by_id(id)
     if guest:
@@ -34,7 +34,7 @@ def get_guest(id):
 
 @guest_bp.route("/guests", methods=["POST"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def create_guest():
     data = request.json
     print("DATA")
@@ -46,6 +46,7 @@ def create_guest():
     position_id = data.get("position_id")
     church_id = data.get("church_id")
     directive_id = data.get("directive_id")
+    code = data.get("code")
     if not nombre or not apellidos:
         return jsonify({"error": "Faltan datos requeridos"}), 400
     guest = Guest(
@@ -55,17 +56,16 @@ def create_guest():
         telefono=telefono, 
         position_id=position_id if position_id not in [None, 0] else None, 
         church_id=church_id if church_id not in [None, 0] else None, 
-        directive_id=directive_id if directive_id is not None else None
+        directive_id=directive_id if directive_id is not None else None,
+        code=code 
     )
     
     guest.save()
     return jsonify(guest.serialize()), 201
 
-
-
 @guest_bp.route("/guests/<int:id>", methods=["PUT"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def update_guest(id):
     guest = Guest.get_by_id(id)
     if not guest:
@@ -78,6 +78,7 @@ def update_guest(id):
     position_id = data.get("position_id")
     church_id = data.get("church_id")
     directive_id = data.get("directive_id")
+    code = data.get("code")
     guest.update(
         nombre=nombre, 
         apellidos=apellidos, 
@@ -85,13 +86,14 @@ def update_guest(id):
         telefono=telefono, 
         position_id=position_id if position_id is not None else None, 
         church_id=church_id if church_id is not None else None, 
-        directive_id=directive_id if directive_id is not None else None
+        directive_id=directive_id if directive_id is not None else None,
+        code=code
     )
     return jsonify(guest.serialize())
 
 @guest_bp.route("/guests/<int:id>", methods=["DELETE"])
 @jwt_required
-@roles_required(roles=["Editor"])
+@roles_required(["Editor"])
 def delete_guest(id):
     guest = Guest.get_by_id(id)
     if not guest:

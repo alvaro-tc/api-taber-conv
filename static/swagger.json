@@ -1464,6 +1464,9 @@
           },
           "direccion": {
             "type": "string"
+          },
+          "code": {
+            "type": "integer"
           }
         },
         "required": ["nombre", "departamento", "area"]
@@ -1475,6 +1478,7 @@
             "type": "integer",
             "readOnly": true
           },
+          
           "descripcion": {
             "type": "string"
           }

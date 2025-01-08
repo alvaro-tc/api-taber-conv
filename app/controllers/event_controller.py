@@ -26,8 +26,6 @@ def get_event(id):
 @roles_required(["UserManager"])
 def create_event():
     data = request.json
-    print("hola mundo")
-    print(data)
     descripcion = data.get("descripcion")
     estado = data.get("estado", True)
     fecha_str = data.get("fecha")
