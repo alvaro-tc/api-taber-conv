@@ -113,8 +113,14 @@ def create_event_detail_from_scanner():
     guest = Guest.get_by_id(guest_id)
     if not guest:
         return jsonify({"error": "Invitado no encontrado"}), 404
-    if Guest.query.filter_by(code=guest_code).first():
-        return jsonify({"error": "El código QR ya esta asignado a otra persona"}), 400
+    
+    if guest.code == guest_code:
+        return jsonify({"error": "El código QR ya esta asignado a esta persona"}), 400
+    
+    
+    guestduplicade = Guest.query.filter_by(code=guest_code).first()
+    if guestduplicade:
+        return jsonify({"error": "El código QR ya esta asignado a la persona: "+guestduplicade.nombre+" "+guestduplicade.apellidos}), 400
 
     guest.update(code=guest_code)
     if not guest_id or not guest_code:
