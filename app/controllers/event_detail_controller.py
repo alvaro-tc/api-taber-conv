@@ -9,6 +9,34 @@ from app.models.directive_model import Directive
 
 event_detail_bp = Blueprint("event_detail", __name__)
 
+@event_detail_bp.route("/event_details/<int:event_id>/<int:directive_id>", methods=["GET"])
+@jwt_required
+@roles_required(["Editor"])
+def get_event_detail_by_directive(event_id, directive_id):
+    guests = Guest.query.filter_by(directive_id=directive_id).all()
+    event_details = EventDetail.query.filter_by(event_id=event_id).all()
+    event_guest_ids = {event_detail.guest_id for event_detail in event_details}
+    
+    guests_data = []
+    for guest in guests:
+        guest_data = guest.serialize()
+        guest_data["church_name"] = guest.church.nombre if guest.church else None
+        guest_data["departamento"] = guest.church.departamento if guest.church else None
+        guest_data["position_description"] = guest.position.descripcion if guest.position else None
+        guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
+        if guest.id in event_guest_ids:
+            detalle = EventDetail.query.filter_by(guest_id=guest.id).first()
+            guest_data["hora"] = detalle.hora
+            guest_data["observaciones"] = detalle.observaciones
+            guest_data["asistencia"] = 1
+        else:
+            guest_data["hora"] = None
+            guest_data["observaciones"] = None
+            guest_data["asistencia"] = 0
+        guests_data.append(guest_data)
+    
+    return jsonify(guests_data)
+
 @event_detail_bp.route("/event_details/statistics", methods=["GET"])
 @jwt_required
 def get_active_event_detail():
@@ -91,20 +119,6 @@ def get_event_details_with_guests(event_id):
         guests_data.append(guest_data)
     
     return jsonify(guests_data)
-@event_detail_bp.route("/event_details/<int:id>/<int:id2>", methods=["GET"])
-@jwt_required
-@roles_required(["Editor"])
-def get_event_detail_by_directive(id):
-    event_details = EventDetail.query.filter_by(event_id=id).all()
-    if event_details:
-        event_details_data = []
-        for event_detail in event_details:
-            event_detail_data = event_detail.serialize()
-            event_detail_data["guest_nombre"] = event_detail.guest.nombre if event_detail.guest else None
-            event_detail_data["guest_apellidos"] = event_detail.guest.apellidos if event_detail.guest else None
-            event_details_data.append(event_detail_data)
-        return jsonify(event_details_data)
-    return jsonify([])
 
 @event_detail_bp.route("/event_details", methods=["POST"])
 @jwt_required
