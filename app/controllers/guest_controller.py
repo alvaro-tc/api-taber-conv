@@ -146,7 +146,8 @@ def update_guest(id):
     monto2 = data.get("monto2")
     observaciones1 = data.get("observaciones1")
     observaciones2 = data.get("observaciones2")
-    
+    print("DATA")
+    print(data)
     if any([monto1, monto2, observaciones1, observaciones2]):
         payment = Payment.query.filter_by(guest_id=guest.id).first()
         if payment:
