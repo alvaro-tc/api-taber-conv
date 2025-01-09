@@ -25,7 +25,7 @@ def get_guests():
 @guest_bp.route("/guests/payment", methods=["GET"])
 @jwt_required
 @roles_required(["Editor", "Viewer"])
-def get_guests():
+def get_guests_with_payments():
     guests = Guest.get_all()
     guests_data = []
     for guest in guests:
