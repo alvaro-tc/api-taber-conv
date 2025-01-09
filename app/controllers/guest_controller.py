@@ -147,12 +147,24 @@ def update_guest(id):
     observaciones1 = data.get("observaciones1")
     observaciones2 = data.get("observaciones2")
     
-    payment = Payment.query.filter_by(guest_id=guest.id).first()
-    if payment:
-        payment.update(monto1=monto1, monto2=monto2, observaciones1=observaciones1, observaciones2=observaciones2)
-    else:
-        payment = Payment(monto1=monto1, monto2=monto2, observaciones1=observaciones1, observaciones2=observaciones2, guest_id=guest.id)
-        payment.save()
+    if any([monto1, monto2, observaciones1, observaciones2]):
+        payment = Payment.query.filter_by(guest_id=guest.id).first()
+        if payment:
+            payment.update(
+                monto1=monto1 if monto1 is not None else payment.monto1,
+                monto2=monto2 if monto2 is not None else payment.monto2,
+                observaciones1=observaciones1 if observaciones1 is not None else payment.observaciones1,
+                observaciones2=observaciones2 if observaciones2 is not None else payment.observaciones2
+            )
+        else:
+            payment = Payment(
+                monto1=monto1,
+                monto2=monto2,
+                observaciones1=observaciones1,
+                observaciones2=observaciones2,
+                guest_id=guest.id
+            )
+            payment.save()
     
     return jsonify(guest.serialize())
 

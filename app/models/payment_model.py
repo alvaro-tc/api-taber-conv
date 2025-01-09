@@ -5,10 +5,10 @@ class Payment(db.Model):
     __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    monto1 = db.Column(db.Float, nullable=False)
-    monto2 = db.Column(db.Float, nullable=False)
+    monto1 = db.Column(db.Float, nullable=True)
+    monto2 = db.Column(db.Float, nullable=True)
     observaciones1 = db.Column(db.String(255), nullable=True)
-    observaciones2 = db.Column(db.String(255), nullable=False)
+    observaciones2 = db.Column(db.String(255), nullable=True)
     fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=True)
     
     # Relación con la tabla "guests"
