@@ -60,7 +60,7 @@ class Church(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'nombre': self.nombre,
+            'nombre': self.nombre + " ("+ self.departamento + ")",
             'departamento': self.departamento,
             'area': self.area,
             'localidad': self.localidad,
