@@ -1,20 +1,24 @@
 from app.extensions import db
 from datetime import datetime
+from app.models.guest_model import Guest
+from app.models.user_model import User
 
 class Payment(db.Model):
     __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    monto1 = db.Column(db.Float, nullable=True)
-    monto2 = db.Column(db.Float, nullable=True)
-    observaciones1 = db.Column(db.String(255), nullable=True)
-    observaciones2 = db.Column(db.String(255), nullable=True)
-    fecha_registro = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=True)
-    
-    # Relación con la tabla "guests"
-    guest_id = db.Column(db.Integer, db.ForeignKey('guests.id', ondelete='CASCADE'), nullable=True)
-    guest = db.relationship('Guest', back_populates='payment')
-    
+    id_payer = db.Column(db.Integer, db.ForeignKey('guests.id', ondelete='CASCADE'), nullable=False)
+    id_guest = db.Column(db.Integer, db.ForeignKey('guests.id', ondelete='CASCADE'), nullable=False)
+    id_user = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    monto = db.Column(db.Numeric(10, 2), nullable=False)
+    fecha = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+    observaciones = db.Column(db.Text, nullable=True)
+
+    payer = db.relationship('Guest', foreign_keys=[id_payer], back_populates='payments_made')
+    guest = db.relationship('Guest', foreign_keys=[id_guest], back_populates='payments_received')
+    user = db.relationship('User', back_populates='payments_registered')
+    details = db.relationship('PaymentDetail', back_populates='payment')
+
     @staticmethod
     def get_all():
         return Payment.query.all()
@@ -24,33 +28,49 @@ class Payment(db.Model):
         return Payment.query.get(payment_id)
 
     def save(self):
+        if not Guest.query.get(self.id_payer):
+            raise ValueError("El pagador proporcionado no existe")
+        if not Guest.query.get(self.id_guest):
+            raise ValueError("El beneficiario proporcionado no existe")
+        if not User.query.get(self.id_user):
+            raise ValueError("El usuario (registrador) proporcionado no existe")
+        
         db.session.add(self)
         db.session.commit()
 
-    def update(self, monto1=None, monto2=None, observaciones1=None, observaciones2=None, guest_id=None):
-        if monto1 is not None:
-            self.monto1 = monto1
-        if monto2 is not None:
-            self.monto2 = monto2
-        if observaciones1 is not None:
-            self.observaciones1 = observaciones1
-        if observaciones2 is not None:
-            self.observaciones2 = observaciones2
-        if guest_id is not None:
-            self.guest_id = guest_id
+    def update(self, id_payer=None, id_guest=None, id_user=None, monto=None, fecha=None, observaciones=None):
+        if id_payer and not Guest.query.get(id_payer):
+            raise ValueError("El pagador proporcionado no existe")
+        if id_guest and not Guest.query.get(id_guest):
+            raise ValueError("El beneficiario proporcionado no existe")
+        if id_user and not User.query.get(id_user):
+            raise ValueError("El usuario (registrador) proporcionado no existe")
+        
+        if id_payer is not None:
+            self.id_payer = id_payer
+        if id_guest is not None:
+            self.id_guest = id_guest
+        if id_user is not None:
+            self.id_user = id_user
+        if monto is not None:
+            self.monto = monto
+        if fecha is not None:
+            self.fecha = fecha
+        if observaciones is not None:
+            self.observaciones = observaciones
         db.session.commit()
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        
+
     def serialize(self):
         return {
             'id': self.id,
-            'monto1': self.monto1,
-            'monto2': self.monto2,
-            'observaciones1': self.observaciones1,
-            'observaciones2': self.observaciones2,
-            'fecha_registro': self.fecha_registro.isoformat(),
-            'guest_id': self.guest_id  # Nuevo campo añadido
+            'id_payer': self.id_payer,
+            'id_guest': self.id_guest,
+            'id_user': self.id_user,
+            'monto': self.monto,
+            'fecha': self.fecha.isoformat(),
+            'observaciones': self.observaciones
         }

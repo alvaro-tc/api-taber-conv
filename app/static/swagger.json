@@ -1430,6 +1430,504 @@
           }
         }
       }
+    },
+    "/api/payments": {
+      "get": {
+        "tags": ["payment"],
+        "summary": "Obtiene todos los pagos",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pagos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payment"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["payment"],
+        "summary": "Crea un nuevo pago",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Payment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pago creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/payments/{id}": {
+      "get": {
+        "tags": ["payment"],
+        "summary": "Obtiene un pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del pago",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["payment"],
+        "summary": "Actualiza un pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Payment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pago actualizado"
+          },
+          "404": {
+            "description": "Pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["payment"],
+        "summary": "Elimina un pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pago eliminado"
+          },
+          "404": {
+            "description": "Pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/payment_details": {
+      "get": {
+        "tags": ["payment_detail"],
+        "summary": "Obtiene todos los detalles de pagos",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de detalles de pagos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentDetail"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["payment_detail"],
+        "summary": "Crea un nuevo detalle de pago",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentDetail"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Detalle de pago creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/payment_details/{id}": {
+      "get": {
+        "tags": ["payment_detail"],
+        "summary": "Obtiene un detalle de pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del detalle de pago",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Detalle de pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["payment_detail"],
+        "summary": "Actualiza un detalle de pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentDetail"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Detalle de pago actualizado"
+          },
+          "404": {
+            "description": "Detalle de pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["payment_detail"],
+        "summary": "Elimina un detalle de pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Detalle de pago eliminado"
+          },
+          "404": {
+            "description": "Detalle de pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/payment_concepts": {
+      "get": {
+        "tags": ["payment_concept"],
+        "summary": "Obtiene todos los conceptos de pago",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de conceptos de pago",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentConcept"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "post": {
+        "tags": ["payment_concept"],
+        "summary": "Crea un nuevo concepto de pago",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentConcept"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Concepto de pago creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/payment_concepts/{id}": {
+      "get": {
+        "tags": ["payment_concept"],
+        "summary": "Obtiene un concepto de pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles del concepto de pago",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentConcept"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Concepto de pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["payment_concept"],
+        "summary": "Actualiza un concepto de pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentConcept"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Concepto de pago actualizado"
+          },
+          "404": {
+            "description": "Concepto de pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["payment_concept"],
+        "summary": "Elimina un concepto de pago por ID",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Concepto de pago eliminado"
+          },
+          "404": {
+            "description": "Concepto de pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1620,6 +2118,73 @@
           }
         },
         "required": ["nombre"]
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "id_payer": {
+            "type": "integer"
+          },
+          "id_guest": {
+            "type": "integer"
+          },
+          "id_user": {
+            "type": "integer"
+          },
+          "monto": {
+            "type": "number",
+            "format": "float"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observaciones": {
+            "type": "string"
+          }
+        },
+        "required": ["id_payer", "id_guest", "id_user", "monto"]
+      },
+      "PaymentDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "id_payment": {
+            "type": "integer"
+          },
+          "concepto": {
+            "type": "string"
+          },
+          "monto": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "required": ["id_payment", "concepto", "monto"]
+      },
+      "PaymentConcept": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "monto_inicial": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "required": ["nombre", "monto_inicial"]
       }
     }
   }

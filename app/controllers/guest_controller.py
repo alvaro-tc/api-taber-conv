@@ -63,21 +63,6 @@ def get_guest(id):
         guest_data["position_description"] = guest.position.descripcion if guest.position else None
         guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
         
-        # Obtener los datos de pago
-        payment = Payment.query.filter_by(guest_id=guest.id).first()
-        if payment:
-            guest_data["monto1"] = payment.monto1
-            guest_data["monto2"] = payment.monto2
-            guest_data["observaciones1"] = payment.observaciones1
-            guest_data["observaciones2"] = payment.observaciones2
-            guest_data["fecha_registro"] = payment.fecha_registro.isoformat()
-        else:
-            guest_data["monto1"] = None
-            guest_data["monto2"] = None
-            guest_data["observaciones1"] = None
-            guest_data["observaciones2"] = None
-            guest_data["fecha_registro"] = None
-        
         return jsonify(guest_data)
     return jsonify({"error": "Invitado no encontrado"}), 404
 
@@ -141,31 +126,6 @@ def update_guest(id):
         code=code
     )
     
-    # Actualizar los datos de pago
-    monto1 = data.get("monto1")
-    monto2 = data.get("monto2")
-    observaciones1 = data.get("observaciones1")
-    observaciones2 = data.get("observaciones2")
-    print("DATA")
-    print(data)
-    if any([monto1, monto2, observaciones1, observaciones2]):
-        payment = Payment.query.filter_by(guest_id=guest.id).first()
-        if payment:
-            payment.update(
-                monto1=monto1 if monto1 is not None else payment.monto1,
-                monto2=monto2 if monto2 is not None else payment.monto2,
-                observaciones1=observaciones1 if observaciones1 is not None else payment.observaciones1,
-                observaciones2=observaciones2 if observaciones2 is not None else payment.observaciones2
-            )
-        else:
-            payment = Payment(
-                monto1=monto1,
-                monto2=monto2,
-                observaciones1=observaciones1,
-                observaciones2=observaciones2,
-                guest_id=guest.id
-            )
-            payment.save()
     
     return jsonify(guest.serialize())
 

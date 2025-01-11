@@ -27,7 +27,10 @@ class Guest(db.Model):
     
     
     event_details = db.relationship('EventDetail', back_populates='guest')
-    payment = db.relationship('Payment', back_populates='guest')
+    payments_made = db.relationship('Payment', foreign_keys='Payment.id_payer', back_populates='payer')
+    payments_received = db.relationship('Payment', foreign_keys='Payment.id_guest', back_populates='guest')
+    
+    
     
     @staticmethod
     def get_all():

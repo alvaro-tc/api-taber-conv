@@ -20,7 +20,7 @@ class User(UserMixin, db.Model):
     
     
     event_details = db.relationship('EventDetail', back_populates='user')
-    
+    payments_registered = db.relationship('Payment', back_populates='user')
     
     
     def __init__(self, email, password, roles=["viewer"]):
