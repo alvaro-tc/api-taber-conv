@@ -1597,6 +1597,38 @@
         }
       }
     },
+    "/api/payments/details": {
+      "get": {
+        "tags": ["payment"],
+        "summary": "Obtiene todos los detalles de pagos",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalles de los pago",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
     "/api/payment_details": {
       "get": {
         "tags": ["payment_detail"],

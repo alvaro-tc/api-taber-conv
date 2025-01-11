@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy.orm import joinedload
 from app.models.guest_model import Guest
 from app.models.payment_model import Payment
 from app.utils.decorators import jwt_required, roles_required
-from datetime import datetime
 
 guest_bp = Blueprint("guest", __name__)
 
@@ -10,7 +10,12 @@ guest_bp = Blueprint("guest", __name__)
 @jwt_required
 @roles_required(["Editor", "Viewer"])
 def get_guests():
-    guests = Guest.get_all()
+    guests = Guest.query.options(
+        joinedload(Guest.church),
+        joinedload(Guest.position),
+        joinedload(Guest.directive)
+    ).all()
+    
     guests_data = []
     for guest in guests:
         guest_data = guest.serialize()
@@ -20,20 +25,29 @@ def get_guests():
         guests_data.append(guest_data)
     return jsonify(guests_data)
 
-
-
 @guest_bp.route("/guests/payment", methods=["GET"])
 @jwt_required
 @roles_required(["Editor", "Viewer"])
 def get_guests_with_payments():
-    guests = Guest.get_all()
+    guests = Guest.query.options(
+        joinedload(Guest.church),
+        joinedload(Guest.position),
+        joinedload(Guest.directive),
+        joinedload(Guest.payments_received).joinedload(Payment.payer)
+    ).all()
+    
     guests_data = []
     for guest in guests:
         guest_data = guest.serialize()
         guest_data["church_name"] = guest.church.nombre if guest.church else None
         guest_data["position_description"] = guest.position.descripcion if guest.position else None
         guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
-       
+        guest_data["payments"] = []
+        for payment in guest.payments_received:
+            payment_data = payment.serialize()
+            payer = payment.payer
+            payment_data["payer_name"] = f"{payer.nombre} {payer.apellidos}" if payer else None
+            guest_data["payments"].append(payment_data)
         guests_data.append(guest_data)
     return jsonify(guests_data)
 
