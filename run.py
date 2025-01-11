@@ -12,6 +12,8 @@ from app.controllers.position_controller import position_bp
 from app.controllers.event_detail_controller import event_detail_bp
 from app.controllers.directive_controller import directive_bp
 from app.controllers.payment_controller import payment_bp
+from app.controllers.payment_concept_controller import payment_concept_bp
+from app.controllers.payment_detail_controller import payment_detail_bp
 
 from app.extensions import db, jwt
 import json
@@ -56,6 +58,9 @@ app.register_blueprint(position_bp, url_prefix="/api")
 app.register_blueprint(event_detail_bp, url_prefix="/api")
 app.register_blueprint(directive_bp, url_prefix="/api")
 app.register_blueprint(payment_bp, url_prefix="/api")
+app.register_blueprint(payment_concept_bp, url_prefix="/api")
+app.register_blueprint(payment_detail_bp, url_prefix="/api")
+
 # load user
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_headers, jwt_data):

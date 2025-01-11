@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models.payment_model import PaymentDetail
+from app.models.payment_detail_model import PaymentDetail
 from app.utils.decorators import jwt_required, roles_required
 
 payment_detail_bp = Blueprint("payment_detail", __name__)
