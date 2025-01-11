@@ -10,7 +10,7 @@ class Payment(db.Model):
     id_payer = db.Column(db.Integer, db.ForeignKey('guests.id', ondelete='CASCADE'), nullable=False)
     id_guest = db.Column(db.Integer, db.ForeignKey('guests.id', ondelete='CASCADE'), nullable=False)
     id_user = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    first_payment = db.Column(db.Numeric(10, 2), nullable=False)
+    first_payment = db.Column(db.Numeric(10, 2), nullable=True)
     second_payment = db.Column(db.Numeric(10, 2), nullable=True)
     fecha = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
     observaciones = db.Column(db.Text, nullable=True)

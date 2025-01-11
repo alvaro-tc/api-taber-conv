@@ -120,14 +120,15 @@ def logout_user():
 
 
 
+
 @user_bp.route("/users", methods=["GET"])
 @jwt_required()
 @roles_required(roles=["UserManager"])
 def get_all_users():
     users = User.query.all()
-    result = UserSchema(many=True).dump(users)
-    
-    return jsonify(result), 200
+    return jsonify([user.serialize() for user in users])
+
+
 
 
 @user_bp.route("/user", methods=["GET"])

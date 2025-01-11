@@ -123,3 +123,18 @@ def create_multiple_payments():
         created_payments.append(payment.serialize())
     
     return jsonify(created_payments), 201
+
+
+
+@payment_bp.route("/payments/guest/<int:id_guest>", methods=["DELETE"])
+@jwt_required
+@roles_required(["Editor"])
+def delete_payments_by_guest(id_guest):
+    payments = Payment.query.filter_by(id_guest=id_guest).all()
+    if not payments:
+        return jsonify({"error": "No se encontraron pagos para el invitado proporcionado"}), 404
+    
+    for payment in payments:
+        payment.delete()
+    
+    return "", 204

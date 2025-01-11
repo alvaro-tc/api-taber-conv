@@ -26,7 +26,6 @@ class User(UserMixin, db.Model):
     def __init__(self, email, password, roles=["viewer"]):
         self.email = email
         self.roles = json.dumps(roles)
-        
         self.password = generate_password_hash(password)
         
     def get_roles(self):
@@ -50,3 +49,13 @@ class User(UserMixin, db.Model):
     @staticmethod
     def find_by_email(email):
         return User.query.filter_by(email=email).first()
+    
+    def serialize(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'roles': json.loads(self.roles),
+            'name': self.name,
+            'lastname': self.lastname,
+            'cellphone': self.cellphone
+        }

@@ -6,6 +6,7 @@ from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 from flask_jwt_extended import current_user
 from app.models.directive_model import Directive
+from sqlalchemy.orm import joinedload
 
 event_detail_bp = Blueprint("event_detail", __name__)
 
@@ -13,7 +14,11 @@ event_detail_bp = Blueprint("event_detail", __name__)
 @jwt_required
 @roles_required(["Editor"])
 def get_event_detail_by_directive(event_id, directive_id):
-    guests = Guest.query.filter_by(directive_id=directive_id).all()
+    guests = Guest.query.filter_by(directive_id=directive_id).options(
+        joinedload(Guest.church),
+        joinedload(Guest.position),
+        joinedload(Guest.directive)
+    ).all()
     event_details = EventDetail.query.filter_by(event_id=event_id).all()
     event_guest_ids = {event_detail.guest_id for event_detail in event_details}
     
@@ -50,14 +55,16 @@ def get_active_event_detail():
         event = Event.query.get(event_id)
         event_description = event.descripcion if event else None
         qr_available = event.qr_available if event else None
-        event_details = EventDetail.query.filter_by(event_id=event_id).all()
+        event_details = EventDetail.query.options(
+            joinedload(EventDetail.guest).joinedload(Guest.directive)
+        ).filter_by(event_id=event_id).all()
         directive_counts = {}
         
         directives = Directive.query.all()
         
         for directive in directives:
             directive_nombre = directive.nombre
-            total= Guest.query.filter_by(directive_id=directive.id).count()
+            total = Guest.query.filter_by(directive_id=directive.id).count()
             directive_counts[directive_nombre] = {"asistencia": 0, "total": total}
             
         directive_counts["IGLESIAS"] = {"asistencia": 0, "total": Guest.query.filter(Guest.directive_id.is_(None)).count()}
@@ -86,17 +93,32 @@ def get_active_event_detail():
 
 @event_detail_bp.route("/event_details", methods=["GET"])
 @jwt_required
-@roles_required(["Editor"])
+@roles_required(["Editor", "Viewer"])
 def get_event_details():
-    event_details = EventDetail.get_all()
-    event_details_data = [event_detail.serialize() for event_detail in event_details]
+    event_details = EventDetail.query.options(
+        joinedload(EventDetail.event),
+        joinedload(EventDetail.guest),
+        joinedload(EventDetail.user)
+    ).all()
+    
+    event_details_data = []
+    for event_detail in event_details:
+        event_detail_data = event_detail.serialize()
+        event_detail_data["event_name"] = event_detail.event.nombre if event_detail.event else None
+        event_detail_data["guest_name"] = f"{event_detail.guest.nombre} {event_detail.guest.apellidos}" if event_detail.guest else None
+        event_detail_data["user_name"] = f"{event_detail.user.name} {event_detail.user.lastname}" if event_detail.user else None
+        event_details_data.append(event_detail_data)
     return jsonify(event_details_data)
 
 @event_detail_bp.route("/event_details/<int:event_id>", methods=["GET"])
 @jwt_required
 @roles_required(["Editor"])
 def get_event_details_with_guests(event_id):
-    guests = Guest.query.all()
+    guests = Guest.query.options(
+        joinedload(Guest.church),
+        joinedload(Guest.position),
+        joinedload(Guest.directive)
+    ).all()
     event_details = EventDetail.query.filter_by(event_id=event_id).all()
     event_guest_ids = {event_detail.guest_id for event_detail in event_details}
     
