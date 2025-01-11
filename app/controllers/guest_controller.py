@@ -33,20 +33,7 @@ def get_guests_with_payments():
         guest_data["church_name"] = guest.church.nombre if guest.church else None
         guest_data["position_description"] = guest.position.descripcion if guest.position else None
         guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
-        payment = Payment.query.filter_by(guest_id=guest.id).first()
-        if payment:
-            guest_data["monto1"] = payment.monto1
-            guest_data["monto2"] = payment.monto2
-            guest_data["observaciones1"] = payment.observaciones1
-            guest_data["observaciones2"] = payment.observaciones2
-            guest_data["fecha_registro"] = payment.fecha_registro.isoformat()
-        else:
-            guest_data["monto1"] = None
-            guest_data["monto2"] = None
-            guest_data["observaciones1"] = None
-            guest_data["observaciones2"] = None
-            guest_data["fecha_registro"] = None
-        
+       
         guests_data.append(guest_data)
     return jsonify(guests_data)
 

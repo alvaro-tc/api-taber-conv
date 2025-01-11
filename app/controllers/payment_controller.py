@@ -20,6 +20,8 @@ def get_payment(id):
         return jsonify(payment.serialize())
     return jsonify({"error": "Pago no encontrado"}), 404
 
+
+
 @payment_bp.route("/payments", methods=["POST"])
 @jwt_required
 @roles_required(["Editor"])
@@ -37,6 +39,8 @@ def create_payment():
     payment = Payment(id_payer=id_payer, id_guest=id_guest, id_user=id_user, monto=monto, observaciones=observaciones)
     payment.save()
     return jsonify(payment.serialize()), 201
+
+
 
 @payment_bp.route("/payments/<int:id>", methods=["PUT"])
 @jwt_required
