@@ -168,6 +168,9 @@ def create_event_detail_from_scanner():
     guest.update(code=guest_code)
     if not guest_id or not guest_code:
         return jsonify({"error": "QR invalido"}), 400
-
-    response = guest.serialize()
-    return jsonify(response), 201
+    if guest:
+            guest_data = guest.serialize()
+            guest_data["church_name"] = guest.church.nombre if guest.church else None
+            guest_data["position_description"] = guest.position.descripcion if guest.position else None
+            guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
+            return jsonify(guest_data), 201
