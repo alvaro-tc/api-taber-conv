@@ -31,6 +31,7 @@ def get_payments_details():
         payments_data.append(guest_data)
     return jsonify(payments_data)
 
+
 @payment_bp.route("/payments", methods=["GET"])
 @jwt_required
 @roles_required(["Editor", "Viewer"])
@@ -65,6 +66,54 @@ def create_payment():
     payment = Payment(id_payer=id_payer, id_guest=id_guest, id_user=id_user, first_payment=first_payment, second_payment=second_payment, observaciones=observaciones)
     payment.save()
     return jsonify(payment.serialize()), 201
+
+
+@payment_bp.route("/payments/guests", methods=["POST"])
+@jwt_required
+@roles_required(["Editor"])
+def create_payment_guest():
+    data = request.json
+    print("DATA-----------------------")	
+    print(data)
+    id_user = current_user.id
+    
+    first_payment = data.get("first_payment")
+    second_payment = data.get("second_payment")
+    observaciones = data.get("observaciones")
+    nombre = data.get("nombre")
+    apellidos = data.get("apellidos")
+    telefono = data.get("telefono")
+    position_id = data.get("position_id")
+    church_id = data.get("church_id")
+    directive_id = data.get("directive_id")
+    
+    if not nombre or not apellidos or not position_id:
+        return jsonify({"error": "Faltan datos requeridos"}), 400
+    
+    guest = Guest(
+        nombre=nombre, 
+        apellidos=apellidos, 
+        telefono=telefono, 
+        position_id=position_id if position_id not in [None, 0] else None, 
+        church_id=church_id if church_id not in [None, 0] else None, 
+        directive_id=directive_id if directive_id is not None else None,
+    )
+    
+    guest.save()   
+    
+   
+        
+    id_guest = guest.id
+    id_payer = guest.id
+    
+    payment = Payment(id_payer=id_payer, id_guest=id_guest, id_user=id_user, first_payment=first_payment, second_payment=second_payment, observaciones=observaciones)
+    payment.save()
+        
+  
+    
+    return jsonify(payment.serialize()), 201
+
+
 
 @payment_bp.route("/payments/<int:id>", methods=["PUT"])
 @jwt_required
