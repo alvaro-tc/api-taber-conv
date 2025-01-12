@@ -83,7 +83,7 @@ def get_active_event_detail():
         
         for directive_nombre in directive_counts:
             if directive_nombre == "IGLESIAS":
-                total_guests = Guest.query.filter(Guest.directive_id.is_(None)).count()
+                total_guests = Guest.query.filter(Guest.directive_id.is_(None)).distinct(Guest.church_id).count()
                 if not total_guests: total_guests = 0
             else:
                 directive_id = next((event_detail.guest.directive_id for event_detail in event_details if event_detail.guest and event_detail.guest.directive and event_detail.guest.directive.nombre == directive_nombre), None)
