@@ -65,9 +65,15 @@ def get_active_event_detail():
         for directive in directives:
             directive_nombre = directive.nombre
             total = Guest.query.filter_by(directive_id=directive.id).count()
-            directive_counts[directive_nombre] = {"asistencia": 0, "total": total}
             
-        directive_counts["IGLESIAS"] = {"asistencia": 0, "total": Guest.query.filter(Guest.directive_id.is_(None)).count()}
+            directive_counts[directive_nombre] = {"asistencia": 0, "total": total, "directive_id": directive.id}
+            
+        directive_counts["IGLESIAS"] = {
+            "asistencia": 0,
+            "directive_id": 0,
+            "total": Guest.query.filter(Guest.directive_id.is_(None)).distinct(Guest.church_id).count()
+        }
+        
         if event_details:
             for event_detail in event_details:
                 directive_id = event_detail.guest.directive_id if event_detail.guest else None
@@ -206,7 +212,7 @@ def create_event_detail_from_scanner():
     observaciones = data.get("observaciones")
     
     if not guest_code:
-        return jsonify({"error": "QR invalido"}), 400
+        return jsonify({"error": "QR no asignado"}), 400
     
     # Buscar el evento con estado 0
     event_id = EventDetail.get_event_with_estado(0)

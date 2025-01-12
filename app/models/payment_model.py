@@ -40,6 +40,8 @@ class Payment(db.Model):
         db.session.commit()
 
     def update(self, id_payer=None, id_guest=None, id_user=None, first_payment=None, second_payment=None, fecha=None, observaciones=None):
+
+        
         if id_payer and not Guest.query.get(id_payer):
             raise ValueError("El pagador proporcionado no existe")
         if id_guest and not Guest.query.get(id_guest):

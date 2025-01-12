@@ -73,13 +73,13 @@ def create_payment():
 @roles_required(["Editor"])
 def create_payment_guest():
     data = request.json
-    print("DATA-----------------------")	
-    print(data)
     id_user = current_user.id
     
-    first_payment = data.get("first_payment")
-    second_payment = data.get("second_payment")
-    observaciones = data.get("observaciones")
+    first_payment = data.get("first_payment") if data.get("first_payment") != '' else None
+    second_payment = data.get("second_payment") if data.get("second_payment") != '' else None
+    observaciones = data.get("observaciones") if data.get("observaciones") != '' else None
+    
+    
     nombre = data.get("nombre")
     apellidos = data.get("apellidos")
     telefono = data.get("telefono")
@@ -133,6 +133,94 @@ def update_payment(id):
     payment.update(id_payer=id_payer, id_guest=id_guest, id_user=id_user, first_payment=first_payment, second_payment=second_payment, observaciones=observaciones)
     return jsonify(payment.serialize())
 
+
+
+
+
+@payment_bp.route("/payments/guests/<int:id>", methods=["PUT"])
+@jwt_required
+@roles_required(["Editor"])
+def update_payment_guest(id):
+    print("AAAAAAAAA")
+    data = request.json
+    print("HOlaaaaaaaa")
+    print(data)
+    guest = Guest.get_by_id(id)
+    if not guest:
+        return jsonify({"error": "Invitado no encontrado"}), 404
+    
+    nombre = data.get("nombre")
+    apellidos = data.get("apellidos")
+    email = data.get("email")
+    telefono = data.get("telefono")
+    position_id = data.get("position_id")
+    church_id = data.get("church_id")
+    directive_id = data.get("directive_id")
+    code = data.get("code")
+
+    guest.update(
+        nombre=nombre, 
+        apellidos=apellidos, 
+        email=email, 
+        telefono=telefono, 
+        position_id=position_id if position_id is not None else None, 
+        church_id=church_id if church_id is not None else None, 
+        directive_id=directive_id if directive_id is not None else None,
+        code=code if code is not None else None
+    )
+    
+    
+    id_user = current_user.id
+    
+    payment = Payment.query.filter_by(id_guest=id).first()
+    if payment:
+        id_guest = id
+        id_payer = id
+        
+        first_payment = data.get("first_payment") if data.get("first_payment") != '' else 0
+        second_payment = data.get("second_payment") if data.get("second_payment") != '' else 0
+        observaciones = data.get("observaciones") if data.get("observaciones") != '' else 0
+        
+
+        
+        payment.update(id_payer=id_payer, id_guest=id, id_user=id_user, first_payment=first_payment, second_payment=second_payment, observaciones=observaciones)
+    else:
+        
+        first_payment = data.get("first_payment") if data.get("first_payment") != '' else None
+        second_payment = data.get("second_payment") if data.get("second_payment") != '' else None
+        observaciones = data.get("observaciones") if data.get("observaciones") != '' else None
+        
+
+        id_guest = id
+        id_payer = id
+        payment = Payment(id_payer=id_payer, id_guest=id_guest, id_user=id_user, first_payment=first_payment, second_payment=second_payment, observaciones=observaciones)
+        payment.save()
+    
+    return jsonify(payment.serialize())
+
+
+
+
+
+
+
+@payment_bp.route("/payments/guests/<int:id>", methods=["DELETE"])
+@jwt_required
+@roles_required(["Editor"])
+def delete_payment_guest(id):
+    guest = Guest.get_by_id(id)
+    if guest:
+        payments = Payment.query.filter_by(id_guest=id).all()
+        for payment in payments:
+            payment.delete()
+        guest.delete()
+        return "", 204
+    else:
+        return jsonify({"error": "Invitado no encontrado"}), 404
+
+
+
+
 @payment_bp.route("/payments/<int:id>", methods=["DELETE"])
 @jwt_required
 @roles_required(["Editor"])
@@ -142,6 +230,10 @@ def delete_payment(id):
         return jsonify({"error": "Pago no encontrado"}), 404
     payment.delete()
     return "", 204
+
+
+
+
 
 @payment_bp.route("/payments/multiple", methods=["POST"])
 @jwt_required
