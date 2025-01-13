@@ -11,25 +11,37 @@ from sqlalchemy.orm import joinedload
 
 event_detail_bp = Blueprint("event_detail", __name__)
 
+
 @event_detail_bp.route("/event_details/<int:event_id>/<int:directive_id>", methods=["GET"])
 @jwt_required
 @roles_required(["Editor"])
 def get_event_detail_by_directive(event_id, directive_id):
-    guests = Guest.query.filter_by(directive_id=directive_id).options(
-        joinedload(Guest.church),
-        joinedload(Guest.position),
-        joinedload(Guest.directive)
-    ).all()
     event_details = EventDetail.query.filter_by(event_id=event_id).all()
     event_guest_ids = {event_detail.guest_id for event_detail in event_details}
     
+    if directive_id == 0:
+        guests = Guest.query.filter(Guest.directive_id.is_(None), Guest.id.in_(event_guest_ids)).options(
+            joinedload(Guest.church),
+            joinedload(Guest.position),
+            joinedload(Guest.directive)
+        ).all()
+    else:
+        guests = Guest.query.filter_by(directive_id=directive_id).options(
+            joinedload(Guest.church),
+            joinedload(Guest.position),
+            joinedload(Guest.directive)
+        ).all()
+    
     guests_data = []
+    
     for guest in guests:
         guest_data = guest.serialize()
+        
         guest_data["church_name"] = guest.church.nombre if guest.church else None
         guest_data["departamento"] = guest.church.departamento if guest.church else None
         guest_data["position_description"] = guest.position.descripcion if guest.position else None
         guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
+        
         if guest.id in event_guest_ids:
             detalle = EventDetail.query.filter_by(guest_id=guest.id).first()
             guest_data["hora"] = detalle.hora
