@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy import func
 from app.models.event_detail_model import EventDetail
 from app.models.guest_model import Guest
 from app.models.event_model import Event
@@ -10,6 +11,62 @@ from app.models.directive_model import Directive
 from sqlalchemy.orm import joinedload
 
 event_detail_bp = Blueprint("event_detail", __name__)
+
+
+
+
+
+
+@event_detail_bp.route("/event_details/report", methods=["GET"])
+@jwt_required
+@roles_required(["Editor"])
+def get_event_details_report():
+    events = Event.query.all()
+    guests = Guest.query.options(
+        joinedload(Guest.church),
+        joinedload(Guest.position),
+        joinedload(Guest.directive)
+    ).all()
+    
+    # Fetch all event details in a single query
+    event_details = EventDetail.query.options(
+        joinedload(EventDetail.guest)
+    ).all()
+    
+    # Create a dictionary to map guest_id to their event details
+    event_details_map = {}
+    for event_detail in event_details:
+        if event_detail.guest_id not in event_details_map:
+            event_details_map[event_detail.guest_id] = {}
+        event_details_map[event_detail.guest_id][event_detail.event_id] = event_detail
+    
+    report_data = []
+    
+    for guest in guests:
+        guest_data = guest.serialize()
+        guest_data["church_name"] = guest.church.nombre if guest.church else None
+        guest_data["departamento"] = guest.church.departamento if guest.church else None
+        guest_data["position_description"] = guest.position.descripcion if guest.position else None
+        guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
+        guest_data["attendance"] = []
+        
+        for event in events:
+            if guest.id in event_details_map and event.id in event_details_map[guest.id]:
+                event_detail = event_details_map[guest.id][event.id]
+                guest_data["attendance"].append({
+                    "event_id": event.id,
+                    "event_description": event.descripcion,
+                    "hora": event_detail.hora,
+                    "observaciones": event_detail.observaciones,
+                    "asistencia": 1
+                })
+        
+        report_data.append(guest_data)
+    
+    return jsonify(report_data)
+
+
+
 
 
 @event_detail_bp.route("/event_details/<int:event_id>/<int:directive_id>", methods=["GET"])
@@ -58,7 +115,6 @@ def get_event_detail_by_directive(event_id, directive_id):
 
 
 
-
 @event_detail_bp.route("/event_details/statistics", methods=["GET"])
 @jwt_required
 def get_active_event_detail():
@@ -72,22 +128,31 @@ def get_active_event_detail():
         event = Event.query.get(event_id)
         event_description = event.descripcion if event else None
         qr_available = event.qr_available if event else None
+        
+        # Use subquery to get event details with guests and directives
         event_details = EventDetail.query.options(
             joinedload(EventDetail.guest).joinedload(Guest.directive)
         ).filter_by(event_id=event_id).all()
+        
         directive_counts = {}
         
+        # Get all directives
         directives = Directive.query.all()
         
         # Add IGLESIAS first
         total_unique_churches = Church.query.count()
         directive_counts["IGLESIAS"] = {"directive_id": 0, "asistencia": 0, "total": total_unique_churches}
         
+        # Get total guests for each directive
+        total_guests_per_directive = Guest.query.with_entities(
+            Guest.directive_id, func.count(Guest.id)
+        ).group_by(Guest.directive_id).all()
+        
         for directive in directives:
             directive_nombre = directive.nombre
-            total = Guest.query.filter_by(directive_id=directive.id).count()
+            total = next((count for dir_id, count in total_guests_per_directive if dir_id == directive.id), 0)
             directive_counts[directive_nombre] = {"directive_id": directive.id, "asistencia": 0, "total": total}
-            
+        
         if event_details:
             unique_church_ids = set()
             for event_detail in event_details:
@@ -116,6 +181,7 @@ def get_active_event_detail():
             "event_details": directive_counts
         })
     return jsonify([])
+
 
 
 

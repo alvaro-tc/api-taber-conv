@@ -1265,6 +1265,35 @@
         }
       }
     },
+    "/api/event_details/report": {
+      "get": {
+        "tags": ["event_detail"],
+        "summary": "Obtiene el reporte de detalles de todos los eventos",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reporte de detalles de los eventos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventDetail"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
     "/api/directives": {
       "get": {
         "tags": ["directive"],
