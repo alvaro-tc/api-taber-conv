@@ -20,6 +20,7 @@ def get_payments_details():
     payments_data = []
     for guest in guests:
         guest_data = guest.serialize()
+        guest_data["church_area"] = guest.church.area if guest.church else None
         guest_data["church_name"] = guest.church.nombre if guest.church else None
         guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
         guest_data["payments"] = []
@@ -30,6 +31,8 @@ def get_payments_details():
             guest_data["payments"].append(payment_data)
         payments_data.append(guest_data)
     return jsonify(payments_data)
+
+
 
 
 @payment_bp.route("/payments", methods=["GET"])
@@ -179,7 +182,7 @@ def update_payment_guest(id):
         
         first_payment = data.get("first_payment") if data.get("first_payment") != '' else 0
         second_payment = data.get("second_payment") if data.get("second_payment") != '' else 0
-        observaciones = data.get("observaciones") if data.get("observaciones") != '' else 0
+        observaciones = data.get("observaciones") 
         
 
         

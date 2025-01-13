@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.models.event_detail_model import EventDetail
 from app.models.guest_model import Guest
 from app.models.event_model import Event
+from app.models.church_model import Church
 from app.utils.decorators import jwt_required, roles_required
 from datetime import datetime
 from flask_jwt_extended import current_user
@@ -42,12 +43,16 @@ def get_event_detail_by_directive(event_id, directive_id):
     
     return jsonify(guests_data)
 
+
+
+
+
 @event_detail_bp.route("/event_details/statistics", methods=["GET"])
 @jwt_required
 def get_active_event_detail():
     event_id = EventDetail.get_event_with_estado(0)
     print(event_id)
-    if event_id == None:
+    if event_id is None:
         latest_event = Event.query.filter_by(qr_available=1).first()
         event_id = latest_event.id if latest_event else 1
         
@@ -62,24 +67,27 @@ def get_active_event_detail():
         
         directives = Directive.query.all()
         
+        # Add IGLESIAS first
+        total_unique_churches = Church.query.count()
+        directive_counts["IGLESIAS"] = {"directive_id": 0, "asistencia": 0, "total": total_unique_churches}
+        
         for directive in directives:
             directive_nombre = directive.nombre
             total = Guest.query.filter_by(directive_id=directive.id).count()
+            directive_counts[directive_nombre] = {"directive_id": directive.id, "asistencia": 0, "total": total}
             
-            directive_counts[directive_nombre] = {"asistencia": 0, "total": total, "directive_id": directive.id}
-            
-        directive_counts["IGLESIAS"] = {
-            "asistencia": 0,
-            "directive_id": 0,
-            "total": Guest.query.filter(Guest.directive_id.is_(None)).distinct(Guest.church_id).count()
-        }
-        
         if event_details:
+            unique_church_ids = set()
             for event_detail in event_details:
                 directive_id = event_detail.guest.directive_id if event_detail.guest else None
                 directive_nombre = event_detail.guest.directive.nombre if event_detail.guest and event_detail.guest.directive else "IGLESIAS"
                 if directive_nombre in directive_counts:
-                    directive_counts[directive_nombre]["asistencia"] += 1
+                    if directive_id is None or directive_id == 0:
+                        if event_detail.guest.church_id not in unique_church_ids:
+                            unique_church_ids.add(event_detail.guest.church_id)
+                            directive_counts["IGLESIAS"]["asistencia"] += 1
+                    else:
+                        directive_counts[directive_nombre]["asistencia"] += 1
         
         for directive_nombre in directive_counts:
             if directive_nombre == "IGLESIAS":
@@ -96,6 +104,10 @@ def get_active_event_detail():
             "event_details": directive_counts
         })
     return jsonify([])
+
+
+
+
 
 @event_detail_bp.route("/event_details", methods=["GET"])
 @jwt_required
