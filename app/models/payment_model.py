@@ -39,7 +39,7 @@ class Payment(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, id_payer=None, id_guest=None, id_user=None, first_payment=None, second_payment=None, fecha=None, observaciones=None):
+    def update(self, first_payment, second_payment, observaciones, id_payer=None, id_guest=None, id_user=None,  fecha=None, ):
 
         
         if id_payer and not Guest.query.get(id_payer):
@@ -55,14 +55,11 @@ class Payment(db.Model):
             self.id_guest = id_guest
         if id_user is not None:
             self.id_user = id_user
-        if first_payment is not None:
-            self.first_payment = first_payment
-        if second_payment is not None:
-            self.second_payment = second_payment
+        self.first_payment = first_payment
+        self.second_payment = second_payment
         if fecha is not None:
             self.fecha = fecha
-        if observaciones is not None:
-            self.observaciones = observaciones
+        self.observaciones = observaciones
         db.session.commit()
 
     def delete(self):

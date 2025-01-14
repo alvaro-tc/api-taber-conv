@@ -1716,6 +1716,7 @@
         }
       }
     },
+    
     "/api/payment_details/{id}": {
       "get": {
         "tags": ["payment_detail"],
@@ -1983,6 +1984,74 @@
           },
           "404": {
             "description": "Concepto de pago no encontrado"
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/payments/report": {
+      "get": {
+        "tags": ["payment"],
+        "summary": "Obtiene todos los pagos registrados por un usuario",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pagos obtenidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payment"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado"
+          }
+        }
+      }
+    },
+    "/api/payments/report/{id}": {
+      "get": {
+        "tags": ["payment"],
+        "summary": "Obtiene todos los pagos registrados por un usuario específico",
+        "security": [
+          {
+            "JWTAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pagos obtenidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payment"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "No autorizado"

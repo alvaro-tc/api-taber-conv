@@ -7,6 +7,53 @@ from flask_jwt_extended import current_user
 
 payment_bp = Blueprint("payment", __name__)
 
+
+
+
+@payment_bp.route("/payments/report/", methods=["GET"])
+@jwt_required
+@roles_required(["Editor", "Viewer"])
+def get_payments_report_by_id():
+    user_id = current_user.id
+    payments = Payment.query.filter_by(id_user=user_id).options(
+        joinedload(Payment.payer),
+        joinedload(Payment.guest),
+        joinedload(Payment.user)
+    ).all()
+    payments_data = []
+    for payment in payments:
+        payment_data = payment.serialize()
+        payment_data["payer_name"] = f"{payment.payer.nombre} {payment.payer.apellidos}" if payment.payer else None
+        payment_data["guest_name"] = f"{payment.guest.nombre} {payment.guest.apellidos}" if payment.guest else None
+        payment_data["user_name"] = f"{payment.user.name} {payment.user.lastname}" if payment.user else None
+        payments_data.append(payment_data)
+    return jsonify(payments_data)
+
+
+
+@payment_bp.route("/payments/report/<int:id>", methods=["GET"])
+@jwt_required
+@roles_required(["Editor", "Viewer"])
+def get_payments_report(id):
+    user_id = id
+    payments = Payment.query.filter_by(id_user=user_id).options(
+        joinedload(Payment.payer),
+        joinedload(Payment.guest).joinedload(Guest.church),
+        joinedload(Payment.user)
+    ).all()
+    payments_data = []
+    for payment in payments:
+        payment_data = payment.serialize()
+        payment_data["payer_name"] = f"{payment.payer.nombre} {payment.payer.apellidos}" if payment.payer else None
+        payment_data["guest_name"] = f"{payment.guest.nombre} {payment.guest.apellidos}" if payment.guest else None
+        payment_data["user_name"] = f"{payment.user.name} {payment.user.lastname}" if payment.user else None
+        payment_data["church_name"] = payment.guest.church.nombre if payment.guest and payment.guest.church else None
+        payment_data["church_area"] = payment.guest.church.area if payment.guest and payment.guest.church else None
+        payments_data.append(payment_data)
+    return jsonify(payments_data)
+
+
+
 @payment_bp.route("/payments/details", methods=["GET"])
 @jwt_required
 @roles_required(["Editor", "Viewer"])
@@ -144,14 +191,10 @@ def update_payment(id):
 @jwt_required
 @roles_required(["Editor"])
 def update_payment_guest(id):
-    print("AAAAAAAAA")
     data = request.json
-    print("HOlaaaaaaaa")
-    print(data)
     guest = Guest.get_by_id(id)
     if not guest:
         return jsonify({"error": "Invitado no encontrado"}), 404
-    
     nombre = data.get("nombre")
     apellidos = data.get("apellidos")
     email = data.get("email")
@@ -167,11 +210,10 @@ def update_payment_guest(id):
         email=email, 
         telefono=telefono, 
         position_id=position_id if position_id is not None else None, 
-        church_id=church_id if church_id is not None else None, 
-        directive_id=directive_id if directive_id is not None else None,
+        church_id=church_id if church_id not in [None, 0] else None, 
+        directive_id=directive_id if directive_id not in [None, 0] else None,
         code=code if code is not None else None
     )
-    
     
     id_user = current_user.id
     
@@ -180,11 +222,12 @@ def update_payment_guest(id):
         id_guest = id
         id_payer = id
         
-        first_payment = data.get("first_payment") if data.get("first_payment") != '' else 0
-        second_payment = data.get("second_payment") if data.get("second_payment") != '' else 0
-        observaciones = data.get("observaciones") 
+        first_payment = data.get("first_payment") if data.get("first_payment") != '' else None
+        second_payment = data.get("second_payment") if data.get("second_payment") != '' else None
+        observaciones = data.get("observaciones") if data.get("observaciones") != '' else None
         
-
+        if not (first_payment or second_payment or observaciones):
+            payment.delete()
         
         payment.update(id_payer=id_payer, id_guest=id, id_user=id_user, first_payment=first_payment, second_payment=second_payment, observaciones=observaciones)
     else:
