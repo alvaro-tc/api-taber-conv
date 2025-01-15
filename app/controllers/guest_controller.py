@@ -165,7 +165,7 @@ def create_event_detail_from_scanner():
     if guestduplicade:
         return jsonify({"error": "El código QR ya esta asignado a la persona: "+guestduplicade.nombre+" "+guestduplicade.apellidos}), 400
 
-    guest.update(code=guest_code)
+    guest.update_code(code=guest_code)
     if not guest_id or not guest_code:
         return jsonify({"error": "QR invalido"}), 400
     if guest:

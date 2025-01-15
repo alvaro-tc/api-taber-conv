@@ -44,6 +44,11 @@ class Guest(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def update_code (self, code):
+        if code is not None:
+            self.code = code
+        db.session.commit()
+        
     def update(self, church_id, directive_id, nombre=None, apellidos=None, email=None, telefono=None, position_id=None, code=None):
         if nombre is not None:
             self.nombre = nombre
