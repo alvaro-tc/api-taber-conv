@@ -282,7 +282,7 @@ def delete_event_detail(id):
 
 @event_detail_bp.route("/event_details/<int:event_id>/<int:guest_id>", methods=["DELETE"])
 @jwt_required
-@roles_required(["Editor"])
+@roles_required(["Editor", "Viewer"])
 def delete_event_detail_by_guest_and_event(event_id, guest_id):
     event_detail = EventDetail.query.filter_by(event_id=event_id, guest_id=guest_id).first()
     if not event_detail:
