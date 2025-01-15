@@ -19,7 +19,7 @@ event_detail_bp = Blueprint("event_detail", __name__)
 
 @event_detail_bp.route("/event_details/report", methods=["GET"])
 @jwt_required
-@roles_required(["Editor"])
+@roles_required(["Editor", "Viewer"])
 def get_event_details_report():
     events = Event.query.all()
     guests = Guest.query.options(
@@ -71,7 +71,7 @@ def get_event_details_report():
 
 @event_detail_bp.route("/event_details/<int:event_id>/<int:directive_id>", methods=["GET"])
 @jwt_required
-@roles_required(["Editor"])
+@roles_required(["Editor", "Viewer"])
 def get_event_detail_by_directive(event_id, directive_id):
     event_details = EventDetail.query.filter_by(event_id=event_id).all()
     event_guest_ids = {event_detail.guest_id for event_detail in event_details}
@@ -208,7 +208,7 @@ def get_event_details():
 
 @event_detail_bp.route("/event_details/<int:event_id>", methods=["GET"])
 @jwt_required
-@roles_required(["Editor"])
+@roles_required(["Editor", "Viewer"])
 def get_event_details_with_guests(event_id):
     guests = Guest.query.options(
         joinedload(Guest.church),
