@@ -49,6 +49,7 @@ def get_payments_report(id):
         payment_data["user_name"] = f"{payment.user.name} {payment.user.lastname}" if payment.user else None
         payment_data["church_name"] = payment.guest.church.nombre if payment.guest and payment.guest.church else None
         payment_data["church_area"] = payment.guest.church.area if payment.guest and payment.guest.church else None
+        payment_data["directive_name"] = payment.guest.directive.nombre if payment.guest and payment.guest.directive else None
         payments_data.append(payment_data)
     return jsonify(payments_data)
 
