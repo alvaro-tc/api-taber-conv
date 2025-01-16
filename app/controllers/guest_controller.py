@@ -3,6 +3,7 @@ from sqlalchemy.orm import joinedload
 from app.models.guest_model import Guest
 from app.models.payment_model import Payment
 from app.utils.decorators import jwt_required, roles_required
+from sqlalchemy import func
 
 guest_bp = Blueprint("guest", __name__)
 
@@ -14,7 +15,7 @@ def get_guests():
         joinedload(Guest.church),
         joinedload(Guest.position),
         joinedload(Guest.directive)
-    ).all()
+    ).order_by(Guest.fecha_registro.desc()).all()
     
     guests_data = []
     for guest in guests:
@@ -23,6 +24,7 @@ def get_guests():
         guest_data["position_description"] = guest.position.descripcion if guest.position else None
         guest_data["directive_name"] = guest.directive.nombre if guest.directive else None
         guests_data.append(guest_data)
+        
     return jsonify(guests_data)
 
 @guest_bp.route("/guests/payment", methods=["GET"])
@@ -115,6 +117,9 @@ def update_guest(id):
     directive_id = data.get("directive_id")
     code = data.get("code")
     
+    fecha_registro = func.current_timestamp()
+    guest.fecha_registro = fecha_registro
+    
     # Actualizar los datos del invitado
     guest.update(
         nombre=nombre, 
@@ -165,9 +170,16 @@ def create_event_detail_from_scanner():
     if guestduplicade:
         return jsonify({"error": "El código QR ya esta asignado a la persona: "+guestduplicade.nombre+" "+guestduplicade.apellidos}), 400
 
-    guest.update_code(code=guest_code)
+    if guest.code and guest.second_payment is not None:
+        return jsonify({"error": "El invitado ya tiene un código QR asignado"}), 400
+    else:
+        guest.update_code(code=guest_code)
+    
+    
     if not guest_id or not guest_code:
         return jsonify({"error": "QR invalido"}), 400
+    
+    
     if guest:
             guest_data = guest.serialize()
             guest_data["church_name"] = guest.church.nombre if guest.church else None

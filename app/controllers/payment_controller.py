@@ -63,7 +63,7 @@ def get_payments_details():
         joinedload(Guest.church),
         joinedload(Guest.directive),
         joinedload(Guest.payments_received).joinedload(Payment.payer)
-    ).all()
+    ).order_by(Guest.fecha_registro.desc()).all()
     
     payments_data = []
     for guest in guests:
