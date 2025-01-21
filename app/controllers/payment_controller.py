@@ -55,6 +55,28 @@ def get_payments_report(id):
 
 
 
+
+@payment_bp.route("/payments/report/", methods=["GET"])
+@jwt_required
+@roles_required(["Editor", "Viewer"])
+def get_payments_report_all():
+    payments = Payment.query.all()
+    payments_data = []
+    for payment in payments:
+        payment_data = payment.serialize()
+        payment_data["payer_name"] = f"{payment.payer.nombre} {payment.payer.apellidos}" if payment.payer else None
+        payment_data["guest_name"] = f"{payment.guest.nombre} {payment.guest.apellidos}" if payment.guest else None
+        payment_data["user_name"] = f"{payment.user.name} {payment.user.lastname}" if payment.user else None
+        payment_data["church_name"] = payment.guest.church.nombre if payment.guest and payment.guest.church else None
+        payment_data["church_area"] = payment.guest.church.area if payment.guest and payment.guest.church else None
+        payment_data["directive_name"] = payment.guest.directive.nombre if payment.guest and payment.guest.directive else None
+        payments_data.append(payment_data)
+    return jsonify(payments_data)
+
+
+
+
+
 @payment_bp.route("/payments/details", methods=["GET"])
 @jwt_required
 @roles_required(["Editor", "Viewer"])
