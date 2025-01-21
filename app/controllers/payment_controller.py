@@ -36,11 +36,17 @@ def get_payments_report_by_id():
 @roles_required(["Editor", "Viewer"])
 def get_payments_report(id):
     user_id = id
+    
+        
     payments = Payment.query.filter_by(id_user=user_id).options(
         joinedload(Payment.payer),
         joinedload(Payment.guest).joinedload(Guest.church),
         joinedload(Payment.user)
     ).all()
+    
+    if current_user.has_roles(["Developer"]):
+        payments = Payment.query.all()
+
     payments_data = []
     for payment in payments:
         payment_data = payment.serialize()
